@@ -1,0 +1,443 @@
+---
+sidebar_position: 5
+---
+
+# 第五章 条件语句和比较运算符
+
+在上一章中，我们了解了p5.js中可以使用的一些变量。需要注意的是这些变量仅能在p5.js中的setup和draw函数内使用。如果在这两个函数外使用，我们会获得报错说变量未声明。
+
+本章中我们会来看p5.js中会用到的其它变量：frameCount。我们还会学习与帧相关的知识以及frameRate函数。
+
+## frameCount, frameRate与帧
+
+还记得在上章中我们定义了变量count来对draw函数的调用进行计数吗？我们可以调用p5.js所提供的frameCount变量来实现同样的功能。frameCount变量用于对draw函数在程序中的调用次数进行统计。默认draw函数每秒最多调用60次。p5.js中一个名为frameRate的函数可设置该值。
+
+引入该变量让我们可以讨论p5.js中的帧。可以把帧看作是draw函数调用的结果。draw函数1秒内会被调用很多次，frameRate可用于设置调用数量。如果调用frameRate函数时不传入参数，它会返回p5.js 的当前帧率，我们可以将其存入一个变量并通过console.log来查看每个帧的值（示例5-1）。
+
+**示例5-1.** Console.log打印帧率
+
+```
+function setup() {
+	createCanvas(400, 400);
+}
+
+function draw() {
+	background(220);
+	console.log(frameRate());
+}
+```
+
+默认帧率大约为60。这表示draw函数每秒最多执行60次。这一数字取决我们系统的资源。出于性能相关的原因，比如有限的系统资源，能达到的真实帧率可能会低于这一值。可以认为60是p5.js所致力于达到的理想帧率，但实际帧率或者说性能会低于此。
+
+可以把帧看作翻页动画的每一张纸。每秒钟浏览的纸张数越多表示动画就越流畅。因此帧率高会更好看。如果帧率低的话动画就可能看起来有锯齿。p5.js我们可通过对frameRate函数传入一个整数值来设置具体的帧率。frameRate为1时每秒调用一次draw函数。
+
+如果我们不需要动画，可以在setup函数内调用noLoop函数。这一个函数的调用会让draw函数只被调用一次。
+
+总结一下，frameCount是程序运行生命周期中draw函数执行的次数，frameRate是draw函数在一秒中执行的次数。如果程序的frameRate是60，3秒后frameCount就应该约为60*3=180。
+
+如果所述，我们可通过不传入参数来调用frameRate查看当前帧率。我们不仅可以通过console.log来进行打印，还可以在屏幕上进行更好的显示。
+
+在p5.js中，我们可以使用text函数在屏幕上显示值。text函数将会在屏幕上显示所传入的第一个参数，显示位置x和 y坐标通过第二个和第三个参数传入（示例5-2和图5-1）。通过它我们可以更方便地以可视化的方法查看程序的帧率。注意高帧率的实际结果很难阅读，因为它会快速从一个切换到另一个帧。
+
+**示例5-2.** 帧率的可视化
+
+```
+function setup() {
+	createCanvas(800, 300);
+	textAlign(CENTER, CENTER);
+}
+
+function draw() {
+	background(220);
+	fill(237, 34, 93);
+	textSize(36);
+
+	// 以整型获取当前帧率
+	var fps = parseInt(frameRate(), 10);
+	text("frameRate: " + fps, width/2, height/2);
+}
+```
+
+[![图5-1. 帧率的可视化](https://image.manamana.net/1715863080000_bMsuXCeA)](http://alanhou.org/homepage/wp-content/uploads/2019/02/2019020107575985.jpg)
+
+**图5-1.** 帧率的可视化
+
+**TODO：** 原书截图为61，本处为64，这都大于前文所说的默认值60，原因待确定
+
+parseInt是JavaScript一个函数，可将小数转化为整数。它需要第二个参数来指定所要使用的进制（基本上都是10）。
+
+注意我们在示例5-2中使用了一个名为textAlign的p5.js函数，并传入CENTER, CENTER参数来让文本在屏幕上垂直和水平居中排列。否则文字会从左上角而不是中间进行绘制。
+
+我们还可以尝试在屏幕上显示frameCount变量（示例5-3）。如前所述，这个变量存储draw函数调用的次数。
+
+**示例5-3.** 显示frameCount
+
+```
+function setup() {
+	createCanvas(800, 300);
+	textAlign(CENTER, CENTER);
+}
+
+function draw() {
+	background(220);
+	fill(237, 34, 93);
+	textSize(36);
+
+	text("frameCount: " + frameCount, width/2, height/2);
+}
+```
+
+使用frameCount变量可以快速获取draw函数每次执行递增的值。注意在示例5-4中frameRate设置为更低时frameCount的变化也会变慢。
+
+**示例5-4.** 使用 变量 frameRate
+
+```
+function setup() {
+	createCanvas(800, 300);
+	textAlign(CENTER, CENTER);
+	frameRate(6); // 让动画变慢
+}
+
+function draw() {
+	background(220);
+	fill(237, 34, 93);
+	textSize(36);
+
+	text("frameCount: " + frameCount, width/2, height/2);
+}
+```
+
+我们可以重写前面章节中的示例，来使用自带的frameCount变量代替我们创建的count变量（示例5-5）。
+
+**示例5-5.** 使用变量frameCount
+
+```
+function setup() {
+	createCanvas(800, 300);
+	rectMode(CENTER);
+}
+
+function draw() {
+	background(1, 186, 240);
+	
+	// 声明变量
+	var x = width / 2;
+	var y = height / 2;
+	// 对当前frameCount进行递增
+	var size = 200 + frameCount;
+
+	// 圆形
+	fill(237, 34, 93);
+	noStroke();
+	ellipse(x, y, size, size);
+
+	// 矩形
+	fill(255);
+	rect(x, y, size*0.75, size*0.15);
+}
+```
+
+## 条件语句
+
+到目前为止我们写的所有程序都是从上到下线性执行。但在编程中经常会出现仅在满足特定条件时才执行某一部分程序。比如使用变量frameCount，我们可以为屏幕上的图形添加动画，但假如想要仅在指定帧之后才进行动画呢？比如100帧之后。
+
+这可通过名为 if 语句的编程结构来实现。if 语句让我们可以在满足了特定条件后才执行代码块。if 语句的写法先以if 声明开始，然后在其后的括号内编写运行值为true或false的表达式。然后在紧接着的大括号内，编写在表达式为true时执行的代码块：
+
+```
+if (<conditional statement>) {
+ 	// do something
+}
+```
+
+true或false和数字一样在JavaScript中也是值。它们只是Number（数字）或String（字符串）之外的一种值的类型。称之为布尔（Boolean）值或布尔数据类型。因为true和false是JavaScript原生的数据类型，我们无需在其两边加引号并不会报错:
+
+```
+console.log(true);
+```
+
+但如果输入True或False（首字母大写）时结果则不同。编程语言中对如何书写有严格限制。True并不等价于true。且True不是JavaScript所能识别的值，因此这时不加引号会产生报错：
+
+```
+console.log(True);
+// Uncaught ReferenceError: True is not defined(...)
+```
+
+我们还可以使用比较运算符来生成true或false。比较运算符让我们比较两个值，根据比较的结果生成rue或false。以下是比较运算符的示例，大于号符号>比较两个数字，如果左边的值大于右边的值返回true，否则返回false。
+
+```
+console.log(10 > 2); // 结果为true
+console.log(1 > 100); // false
+console.log(100 > 1); //true
+```
+
+如果左侧值大于或等于右侧值大于等于>=返回true。
+
+```
+console.log(100 >= 100); //true
+```
+
+还有小于&lt;和小于等于&gt;=比较运算符。
+
+```
+console.log(1 < 10); //true
+console.log(10 <= 10); //true
+```
+
+对两个值进行比较检查值是否相等使用三个等于号===。这与我们在数学课上所学的不一样，那里相等运算只使用一个运算符=。但在JavaScript中我们已经将单个等号作为赋值运算符。
+
+**译者注：** 两个等号==也可用作相等比较运算
+
+```
+console.log(1 === 1); //true
+```
+
+我们还可以进行两值是否不相等的比较运算。此时我们在等号前加一个感叹号。
+
+```
+console.log(1 !== 1); //false
+```
+
+请读者多使用比较运算符进行尝试来看在终端中会产生什么样的结果。
+
+下面通过示例5-6和图5-2来使用if结构进行测试。
+
+**示例5-6.** 使用if结构
+
+```
+var num;
+function setup() {
+	num = 1;
+	createCanvas(800, 300);
+	textAlign(CENTER, CENTER);
+}
+
+function draw() {
+	background(220);
+	fill(237, 34, 93);
+	textSize(48);
+	
+	if(num === 1){
+		// 仅当num值等于1时才会执行以下语句
+		text('TRUE', width/2, height/2);
+	}
+}
+```
+
+[![图5-2. 示例5-6的输出](https://image.manamana.net/1715863111000_GgsSEAfE)](http://alanhou.org/homepage/wp-content/uploads/2019/02/2019020202055136.jpg)
+
+**图5-2.** 示例5-6的输出
+
+if代码块会被执行，因为括号内的表达式会运行为true。毕竟数字1和数字1是相等的。我们会看到屏幕上显示TRUE，这正是if代码块所进行操作。
+
+如果我们将变量num的值改为2，屏幕上就不会有任何显示，因为这次if代码块中的比较结果为false，条件分支不会被执行。
+
+if代码块还可以附加一个结构，称作else代码块。else代码块跟在if代码块之后，当if代码块中的条件不满足时就会执行else代码块。让我们使用else代码块来对上例进行扩展（示例5-7和图5-3）。
+
+**示例5-7.** 使用else代码块
+
+```
+var num;
+function setup() {
+	num = 2;
+	createCanvas(800, 300);
+	textAlign(CENTER, CENTER);
+}
+
+function draw() {
+	background(220);
+	fill(237, 34, 93);
+	textSize(48);
+	
+	if(num === 1){
+		// 仅当num值等于1时才会执行以下语句
+		text('TRUE', width/2, height/2);
+	}else{
+		// 在num值不等于1时会执行以下语句
+		text('FALSE', width/2, height/2);
+	}
+}
+```
+
+[![图5-3. 示例5-7的输出](https://image.manamana.net/1715863143000_GyvGwyOH)](http://alanhou.org/homepage/wp-content/uploads/2019/02/201902020226083.jpg)
+
+**图5-3.** 示例5-7的输出
+
+示例5-7中，else语句仅在if语句未执行时才会执行，即在变量num的值不为1时执行。
+
+你可能还注意到我们重复书写了text函数。可对代码进行重构让其更简洁（示例5-8）。根据维基百科，重构是在不改变其外部行为（输出）的情况下重新架构现有计算机代码的过程。
+
+**示例5-8.** 重构我们的代码
+
+```
+var num;
+function setup() {
+	num = 2;
+	createCanvas(800, 300);
+	textAlign(CENTER, CENTER);
+}
+
+function draw() {
+	background(220);
+	fill(237, 34, 93);
+	textSize(48);
+	
+	if(num === 1){
+		value = 'TRUE';
+	}else{
+		value = 'FALSE';
+	}
+	text(value, width/2, height/2);
+}
+```
+
+在我们进行重构之前代码的问题在于如果我们想要改变文本的位置，就需要记住在两个text函数的调用之处都进行修改。看起来这可能不难记住，但即便是如此小的部分也会让代码的维护更为困难。
+
+我们还可对if条件分支添加另一个条件代码块，即else if代码块。else if代码块让我们可以处理更多的条件分支。例如，在示例5-9中，我们可对前例再添加两个else if代码块：
+
+**示例5-9.** 使用else if代码块
+
+```
+var num;
+function setup() {
+	num = 1;
+	createCanvas(800, 300);
+	textAlign(CENTER, CENTER);
+}
+
+function draw() {
+	background(220);
+	fill(237, 34, 93);
+	textSize(48);
+	
+	if(num === 1){
+		value = 'TRUE';
+	}else if(num === 2){
+		value = 'STILL TRUE';
+	}else if(num === 3){
+		value = 'YEP, TRUE';
+	}else{
+		value = 'FALSE';
+	}
+	text(value, width/2, height/2);
+}
+```
+
+尝试修改变量num的值来查看代码的输出。以上使用else if代码块，我们可以对num的值再添加两个具体的条件处理。
+
+使用我们说所学的知识，让我们来修改上一章（示例4-10）来让动画的行为随frameCount变量的条件改变，参见示例5-10。
+
+示例5-10. 条件语句动画
+
+```
+var size; 
+
+function setup() {
+	createCanvas(800, 300);
+	rectMode(CENTER);
+	size = 200;
+}
+
+function draw() {
+	background(1, 186, 240);
+
+	// 声明变量
+	var x = width/2;
+	var y = height/2;
+	var size = 200;
+	if(frameCount < 30){
+		size = size + frameCount;
+	}else{
+		size = size + 30;
+	}
+
+	// 圆形
+	fill(237, 34, 93);
+	noStroke();
+	ellipse(x, y, size, size);
+
+	// 矩形
+	fill(255);
+	rect(x, y, size*0.75, size*0.15);
+}
+```
+
+我们修改之前的示例，当frameCount的值小于30时，会使用frameCount将形状产生动画，达到30时则为保持为静态图像。
+
+我们还可以使用&&或||运算符合并两个逻辑表达式来创建复合语句，&&表示AND。这时我们编写表达式时仅当两个条件语句都为true最终结果才是true。比如我们仅在frameCount大于20且小于30时才对形状生成动画。我们就可以使用AND复合语句来合并这两个条件（示例5-11）。
+
+**示例5-11.** 使用AND复合语句
+
+```
+if (20 < frameCount && frameCount < 30) {
+	size = size + frameCount;
+}
+```
+
+||表示OR。OR复合语句中只要任意一部分语句的值为true则返回true。比如我们在frameCount小于30或大于120时对形状生成动画。则可以使用示例5-12中的脚本进行编写。
+
+## **示例5-12.** 使用OR复合语句
+
+```
+if (frameCount < 30 || frameCount > 120) {
+ 	size = size + frameCount;
+}
+```
+
+## 总结
+
+本章中我们学习了帧的概念以及它如何帮助我们在p5.js中创建动画。
+
+我们还学习了p5.js中记录当前已显示的帧数的变量frameCount以及让我们可以设置帧率的变量frameRate。
+
+我们还学习了一些p5.js函数，比如text函数让我们可以在屏幕上画出文本，textAlign函数让我们可以对齐屏幕上所画出的文本。
+
+在JavaScript的范畴里，我们学习比较运算符、布尔数据类型、true和false以及最重要的if, else if和else条件语句。这些结构在编程中经常使用，并且在其它编程语言也存在。这让我们编写以更为智能的方式运行的代码，而不是傻傻的只能从上到下执行。
+
+## 练习
+
+创建一个动画，其中五个矩形从左侧屏幕外进入画布，移动的速度应不同，并且刚好在要移出屏幕时停止。
+
+**译者补充，仅供参考：**
+
+![](https://image.manamana.net/1715863416000_MdundefinedXYFer)
+
+```
+var count = 0; // 初始化计数变量
+
+function setup() {
+	createCanvas(800, 300);
+	// rectMode(CENTER);
+}
+
+function draw() {
+	background(1, 186, 240);
+
+	// 声明变量
+	var x = -50 + count;
+	var y = 60;
+	var rectWidth = 50;
+	var rectHeight = 50;
+
+	fill(237, 34, 93);
+	noStroke();
+	// 矩形 1
+	drawRect(1, x, y, rectWidth, rectHeight);
+	// 矩形 2
+	drawRect(2, x, y, rectWidth, rectHeight);
+	// 矩形 3
+	drawRect(3, x, y, rectWidth, rectHeight);
+	// 矩形 4
+	drawRect(4, x, y, rectWidth, rectHeight);
+	// 矩形 5
+	drawRect(5, x, y, rectWidth, rectHeight);
+	count = count + 1; // 计数变量递增
+}
+
+function drawRect(speed, x, y, rectWidth, rectHeight){
+	if(x*speed < width-rectWidth){
+		rect(x*speed, y*(speed-1), rectWidth, rectHeight);
+	}else{
+		rect(width-rectWidth, y*(speed-1), rectWidth, rectHeight);
+	}
+}
+```
