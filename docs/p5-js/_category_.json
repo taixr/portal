@@ -1,0 +1,8 @@
+{
+  "label": "Learn JavaScript with p5.js",
+  "position": 2,
+  "link": {
+    "type": "generated-index",
+    "description": "本书的首要重点是使用JavaScript和p5.js来学习编程，创建视效则次之。全书聚集于如何编程，这样读者可以在学习了相关技能后可以选择参与到任何喜欢的领域。从本书中获得的技能融汇贯通，可用于创建读者所选的任何项目：可以是网页应用、可编程机器人（programmable robots）或者生成艺术（generative art）。"
+  }
+}

@@ -1,0 +1,403 @@
+---
+sidebar_position: 4
+---
+
+# 第四章 操作符和变量
+
+在[第一章](https://alanhou.org/p5-js-introduction/)和[第二章](https://alanhou.org/p5-js-getting-started/)我们学习了 JavaScript 中可以使用的变量和数学运算。本章中，我们将运用所学的知识。
+
+## 设置准备
+
+首先我们要创建几个图形随后使用。我们使用ellipse和rect函数来创建类似购物车的图形（示例4-1和图4-1）。
+
+示例4-1. 使用ellipse和rect函数创建购物车
+
+```
+function setup() {
+	createCanvas(800, 300);
+}
+
+function draw() {
+	background(220);
+
+	ellipse(100, 200, 50, 50); // 左边的轮子
+	ellipse(200, 200, 50, 50); // 右边的轮子
+	rect(50, 160, 200, 20); // 车身
+}
+```
+
+[![图4-1. 示例4-1的输出](https://image.manamana.net/1715860476000_nXgiWqgw)](http://alanhou.org/homepage/wp-content/uploads/2019/01/2019013015574399.jpg)
+
+**图4-1.** 示例4-1的输出
+
+看着我们图4-1中的简图，我对位置不太满意。现在需要把它画到再靠右一点。对形状进行移动表示我们需要将每个形状的x 位置参数值再进行增大。
+
+假设我们要对位置 x 再增加150。我们可以先心算再把结果打出来，但幸运的是我们在JavaScript中可轻松地进行运算。我们不把和打出来，而是只要把算式打出来，让JavaScript为我们执行计算（示例4-2和图4-2）。
+
+**示例4-2.** 使用数学运算
+
+```
+function setup() {
+	createCanvas(800, 300);
+}
+
+function draw() {
+	background(220);
+
+	ellipse(100 + 150, 200, 50, 50); // 左边的轮子
+	ellipse(200 + 150, 200, 50, 50); // 右边的轮子
+	rect(50 + 150, 160, 200, 20); // 车身
+}
+```
+
+[![图4-2. 示例4-2的输出](https://image.manamana.net/1715860510000_HrDdMWnf)](http://alanhou.org/homepage/wp-content/uploads/2019/01/2019013113150513.jpg)
+
+**图4-2.** 示例4-2的输出
+
+其它运算也同样可以使用，我们可以用类似的方式进宪减法、乘法或除法运算。
+
+关于运算我们要记住一点，那就是运算的顺序。你可能在数学课上也学过，有些运算的优先级高于其它运算。例如，想要2加上某个数再乘以4，可能会被写成10 + 2 * 4。
+
+但运算中乘法优先级在加法之前。2会先乘以4然后再加上10，所以结果是18而不是你所预期的48。
+
+要控制运算的顺序我们可以使用括号。比如我们可以将上述的等式写成(10 + 2) * 4。
+
+括号内的内容会在其它运算之前进行。在运算的排序中，括号优先，然后是乘除，再后是加减。
+
+## 变量
+
+使用类似这样的表达式会让我们在做运算时更加方便。但我觉得本例真正的问题在于，需要在个不同的地方键入同样的数字。这会导致重复、费时且容易出错。这时使用变量就会非常有用了。
+
+在任何使用到值并将多次使用时，我们应将值存储在变量中。使用变量的好处在于，如果需要修改变量的值，我们只需修改一处即可。我们来用变量对示例进行修改。
+
+记住创建变量的方法。首先在开头使用 var 关键词，使用该关键词非常之重要，在后面我们将会讨论到。
+
+然后我们需要为变量选取一个名称。选取一个能看出含义的名称也很重要。调用变量offset或x我们可能就会知道这是形状在 x 轴上的偏移量。选择带有含义的名称可以让其它人甚至我们自己理解我们的代码。我们通常会希望自己的程序可读性尽可能地强。
+
+既然已经有了指向值的变量，我们就可以使用变量来代替值进行运算了。这样我们只需要在一处修改变量值来进行开形状的移动（示例4-3）。
+
+**示例4-3.** 使用变量offset
+
+```
+function setup() {
+	createCanvas(800, 300);
+}
+
+function draw() {
+	background(220);
+
+	var offset = 150;
+
+	ellipse(100 + offset, 200, 50, 50); // 左边的轮子
+	ellipse(200 + offset, 200, 50, 50); // 右边的轮子
+	rect(50 + offset, 160, 200, 20); // 车身
+}
+```
+
+## 变量续
+
+我想通过另一个示例来讲解变量的其它功能。我们来在画布中间画一个圆并在其中间再画一个矩形（示例4-4和图4-3）。
+
+**示例4-4.** 圆形和矩形
+
+```
+function setup() {
+	createCanvas(800, 300);
+	rectMode(CENTER);
+}
+
+function draw() {
+	background(1, 186, 240);
+
+	// 圆形
+	fill(237, 34, 93);
+	noStroke();
+	ellipse(400, 150, 200, 200);
+
+	// 矩形
+	fill(255);
+	rect(400, 150, 150, 30);
+}
+```
+
+[![图4-3. 示例4-4的输出](https://image.manamana.net/1715860534000_ZsvlntPK)](http://alanhou.org/homepage/wp-content/uploads/2019/01/2019020103020768.jpg)
+
+**图4-3.** 示例4-4的输出
+
+以上程序你能想到优化的点吗？注意我们在形状绘制时重复的使用了 x, y 轴的位置。下面就用变量来进行替换（示例4-5）。
+
+```
+function setup() {
+	createCanvas(800, 300);
+	rectMode(CENTER);
+}
+
+function draw() {
+	background(1, 186, 240);
+
+	// 声明变量
+	var x = 400;
+	var y = 150;
+
+	// 圆形
+	fill(237, 34, 93);
+	noStroke();
+	ellipse(x, y, 200, 200);
+
+	// 矩形
+	fill(255);
+	rect(x, y, 150, 30);
+}
+```
+
+因为形状的位置与画布尺寸并不相关，一旦我们改变了画布的大小，形状的相对位置也会改变。如果一个正方形画布图形在正中，但画布宽度增加时，形状就会在左侧了。要让形状对于任何给定画布尺寸都靠近中间，我们需要为画布的宽和高设置变量。然后使用这些变量有控制形状的位置。
+
+在setup函数内，我们将新建两个变量，名为canvasWidth和canvasHeight，值分别为800和300。我们会将这两个变量传入createCanvas函数中，这样就不用对这些值进行硬编码了。我们计划在draw函数内也使用同样的变量，所以在画布大小改变时，图形的相对位置保持不变。下面我们在draw函数中使用这些变量（示例4-6）。我们将对它们除以2来获取画布宽高各一半的中点。
+
+**示例4-6.** 在draw函数中使用变量
+
+```
+function setup() {
+	var canvasWidth = 800;
+	var canvasHeight = 300;
+
+	createCanvas(canvasWidth, canvasHeight);
+	rectMode(CENTER);
+}
+
+function draw() {
+	background(1, 186, 240);
+
+	// 声明变量
+	var x = canvasWidth/2;
+	var y = canvasHeight/2;
+
+	// 圆形
+	fill(237, 34, 93);
+	noStroke();
+	ellipse(x, y, 200, 200);
+
+	// 矩形
+	fill(255);
+	rect(x, y, 150, 30);
+}
+```
+
+执行以上代码时将会产生报错（**译者注：** 浏览器中将不会显示形状）。在console中查看错误信息时，会看到变量名未被定义的消息：
+
+```
+Uncaught ReferenceError: canvasWidth is not defined (sketch: line 13)
+Uncaught ReferenceError: canvasHeight is not defined (sketch: line 14)
+```
+
+**译者注：** 通常你只会看到第一条报错信息
+
+你可能会感到意外，因为明明我们在setup函数中定义了这两个变量。这一个错误产生的原因我们称之为作用域。变量的作用域决定在何处可以访问变量。JavaScript在的变量在我们使用 var 关键字进行声明时存在一个函数作用域。
+
+我们还可以使用 let 和 const 关键字来进行变量声明。使用这些关键字声明的变量作用域规则又不尽相同，在本书中我们讲解这些关键字。
+
+函数作用域是指函数内声明的变量在函数外不可见。它只能在函数内或函数中内嵌的函数内可以使用。也就是说，如果我们在顶层中定义了变量，在同一层级及其下内嵌的层级（如函数）中该变量均可见。我们现在面临的问题是setup函数中定义的变量在draw函数中不可见。因此，在draw函数中声明的变量，在其它同级的函数中也不可见。
+
+本例的解决方法是我们不在setup函数中声明变量，转而在顶层中进行声明，这样在所以顶层内声明的函数中均可使用这些变量（示例4-7）。
+
+**示例4-7.** 声明全局变量
+
+```
+// 声明全局变量
+var canvasWidth = 800;
+var canvasHeight = 300;
+
+function setup() {
+	createCanvas(canvasWidth, canvasHeight);
+	rectMode(CENTER);
+}
+
+function draw() {
+	background(1, 186, 240);
+
+	// 声明变量
+	var x = canvasWidth/2;
+	var y = canvasHeight/2;
+
+	// 圆形
+	fill(237, 34, 93);
+	noStroke();
+	ellipse(x, y, 200, 200);
+
+	// 矩形
+	fill(255);
+	rect(x, y, 150, 30);
+}
+```
+
+在顶层声明的变量称之为全局变量。通常不建议在顶层进行变量声明，因为我们在浏览器中运行代码，其它在浏览器中运行的插件、扩展等可能会定义了同名的变量，进而导致冲突。在声明的变量名重复时，后声明的变量会覆盖前面一个，因为代码是自上至下执行的。所以这可能会导致程序不按预期执行。但作为初学者不必过于担心这一问题。其它有着同样顾虑的资深开发人员会有保障措施来避免变量被覆盖。现在我们可以在最顶级定义变量，然后同级或下一级的函数中都可以使用这些变量。
+
+本例中，我们在setup函数之外对变量进行了初始化，然后即可setup和draw函数中进行使用。现在可以对变量canvasWidth和canvasHeight设置不同值，形状还会在画布正中，因为位置是通过与画布相同的变量获取的。
+
+## p5.js中的预定义变量
+
+p5.js这个非常有用的库中有一些预定义变量可供我们使用来获取特定值。其中两个可以使用的变量是width和height。通过在setup或draw函数内使用这些变量名，我们可以获取当前画布大小。这让我们可以获取和自定定义变量同样的功能。p5.js的开发人员一定是发现很多开发者都需用到这一功能，然后为大家提供了一个轻松的方案。
+
+基于以上知识，我们可将示例4-7中的代码重写为4-8这样。
+
+**示例4-8.** 使用预定义变量
+
+```
+function setup() {
+	createCanvas(800, 300);
+	rectMode(CENTER);
+}
+
+function draw() {
+	background(1, 186, 240);
+
+	// 声明变量
+	var x = width/2;
+	var y = height/2;
+
+	// 圆形
+	fill(237, 34, 93);
+	noStroke();
+	ellipse(x, y, 200, 200);
+
+	// 矩形
+	fill(255);
+	rect(x, y, 150, 30);
+}
+```
+
+应注意width和height是p5.js中的变量，也就是说在setup和draw函数之外无法使用这些变量。
+
+现在我们知道了如何使用变量，就可以为形状添加动画了。p5.js中实现动画的技巧是p5.js中的draw函数会一直被执行。在该函数内的内容在每次draw函数执行时都会重新绘制。
+
+draw函数执行（可看作向屏幕渲染）的次数称之为帧率。默认情况下p5.js的帧率为60。这表示draw中的内容每秒会被重新绘制（或渲染）60次。如果我们能在每个draw函数调用之间修改变量值，那么就可以创建动画了。
+
+这应该会让你想起翻书动画。每次对draw函数的调用都会生成一张静态图像，但因为每秒发生60次并且每次的差别并不大，我们就会视其为动画。
+
+要创建变量，我们需要在draw函数之外初始化一个名为count的变量。在draw函数中我们将使用下面这个表达式在每次draw函数调用时为变量加1。
+
+```
+count = count + 1;
+```
+
+现在如果我们将变量放在位置参数中，就可以让形状移动了（示例4-9）。在p5.js的探险中这是神奇的一步。
+
+**示例4-9.** 为形状设置动画
+
+```
+var count = 0; // 初始化计数变量
+
+function setup() {
+	createCanvas(800, 300);
+	rectMode(CENTER);
+}
+
+function draw() {
+	background(1, 186, 240);
+
+	// 声明变量
+	var x = width/2 + count;
+	var y = height/2;
+
+	// 圆形
+	fill(237, 34, 93);
+	noStroke();
+	ellipse(x, y, 200, 200);
+
+	// 矩形
+	fill(255);
+	rect(x, y, 150, 30);
+
+	count = count + 1; // 计数变量递增
+}
+```
+
+补充效果图：
+
+![](https://p1-tt.bytecdn.cn/large/pgc-image/d1cccbefb9f34c5f8ab7b905aac0405a)
+
+如果我们不是想让形状移动，而是希望它变大呢？也很简单，首先创建一个变量size，然后替换掉形状中硬编码的值来更轻松的更新大小（示例4-10）。
+
+**示例4-10.** 使用size变量
+
+```
+var count = 0; // 初始化计数变量
+
+function setup() {
+	createCanvas(800, 300);
+	rectMode(CENTER);
+}
+
+function draw() {
+	background(1, 186, 240);
+
+	// 声明变量
+	var x = width/2;
+	var y = height/2;
+	var size = 200 + count; // 控制形状的大小
+
+	// 圆形
+	fill(237, 34, 93);
+	noStroke();
+	ellipse(x, y, size, size);
+
+	// 矩形
+	fill(255);
+	rect(x, y, size*0.75, size*0.15);
+
+	count = count + 1; // 计数变量递增
+}
+```
+
+补充效果图：
+
+![](https://p1-tt.bytecdn.cn/large/pgc-image/b76aa872f3ea44938668b619f566ed27)
+
+## 总结
+
+本章中，我们复习前面的运算符并讨论了运算符的优先级。然后更深入的学习了变量的相关功能，尤其是变量的作用域。我们还学习了一些p5.js中内置的变量，比如width和height， 仅能在setup和draw函数内使用。
+
+最后我们还创建了第一个动画。
+
+## 练习
+
+创建一个动画，有5个矩形在屏幕外逐渐从左向右移动，并且速度各不相同。
+
+**译者补充，仅供参考：**
+
+![](https://p9-tt.bytecdn.cn/large/pgc-image/225d1177287345c08de35c764a3eeb74)
+
+```
+var count = 0; // 初始化计数变量
+
+function setup() {
+	createCanvas(800, 300);
+	// rectMode(CENTER);
+}
+
+function draw() {
+	background(1, 186, 240);
+
+	// 声明变量
+	var x = -50 + count;
+	var y = 60;
+	var rectWidth = 50;
+	var rectHeight = 50;
+
+	fill(237, 34, 93);
+	noStroke();
+	// 矩形 1
+	rect(x, y*0, rectWidth, rectHeight);
+	// 矩形 2
+	rect(x*2, y*1, rectWidth, rectHeight);
+	// 矩形 3
+	rect(x*3, y*2, rectWidth, rectHeight);
+	// 矩形 4
+	rect(x*4, y*3, rectWidth, rectHeight);
+	// 矩形 5
+	rect(x*5, y*4, rectWidth, rectHeight);
+
+	count = count + 1; // 计数变量递增
+}
+```
+

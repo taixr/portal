@@ -1,6 +1,7 @@
-# Website
+# Taixr
 
-This website is built using [Docusaurus](https://docusaurus.io/), a modern static website generator.
+Taixr focuses only on AI and AR
+
 
 ### Installation
 
