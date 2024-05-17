@@ -33,19 +33,23 @@ const config: Config = {
     [
       'classic',
       {
+        gtag: {
+          trackingID: 'G-K4CD0WFGFG',
+          anonymizeIP: true,
+        },
         docs: {
           sidebarPath: './sidebars.ts',
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/taixr/portal/tree/main/packages/create-docusaurus/templates/shared/',
+            'https://github.com/taixr/portal/tree/main/',
         },
         blog: {
           showReadingTime: true,
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/taixr/portal/tree/main/packages/create-docusaurus/templates/shared/',
+            'https://github.com/taixr/portal/tree/main/p',
         },
         theme: {
           customCss: './src/css/custom.css',
@@ -55,6 +59,10 @@ const config: Config = {
   ],
 
   themeConfig: {
+    metadata: [
+      { name: 'keywords', content: 'ai, 人工智能, AR, VR, XR, MR, 增强现实，虚拟现实, 混合现实, visionOS, Vision Pro' },
+      { name: 'twitter:card', content: 'img/docusaurus-social-card.jpg' },
+    ],
     // Replace with your project's social card
     image: 'img/docusaurus-social-card.jpg',
     navbar: {
