@@ -1,0 +1,321 @@
+---
+sidebar_position: 12
+---
+
+# 第十二章 p5.js扩展知识
+
+学到这里，我们基本上做好了最终项目的准备工作，这是一个使用JavaScript和p5.js创建的交互游戏。在下一章中进行讲解。在那之前，我想要演示p5.js中的一些其它有用的函数来扩展我们所能创建程序的领域。
+
+你是否注意到了用现有的知识我们可以在屏幕上画不同形状，但不是能进行沿图形中心旋转等转换？这对我们所创建的视觉效果是一个巨大的阻碍，所以本章中我们将学习如何在p5.js中进行转换来增强我们能力。
+
+## 旋转和偏移
+
+使用过其它的画图库，我得说进行形状的缩放、旋转和偏移等转换在p5.js中并不直观。示例12-1和12-2演示了如何使用p5.js的rotate 函数来旋转形状。
+
+**示例12-1.** 不使用旋转画矩形
+
+```
+function setup() {
+	createCanvas(800, 300);
+	rectMode(CENTER);
+	noStroke();
+}
+
+function draw() {
+	background(220);
+	fill(237, 34, 93);
+	rect(width/2, height/2, 50, 50);
+	rect(width/2+50, height/2+50, 50, 50);
+}
+```
+
+[![图12-1. 示例12-1的输出](https://i.taixr.com/2019020807242380.jpeg)](http://alanhou.org/homepage/wp-content/uploads/2019/02/2019020807242380.jpg)
+
+**图12-1.** 示例12-1的输出
+
+现在我们画出了两个对角的矩形（图12-1）。下面使用rotate函数来查看效果。
+
+**示例12-2.** 使用rotate函数
+
+```
+function setup() {
+	createCanvas(800, 300);
+	rectMode(CENTER);
+	noStroke();
+}
+
+function draw() {
+	background(220);
+	fill(237, 34, 93);
+	rotate(5);
+	rect(width/2, height/2, 50, 50);
+	rect(width/2+50, height/2+50, 50, 50);
+}
+```
+
+这时会看到两个形状从屏幕上消失了。如果你预期的是这两个形状旋转5度，那一定是一个令人不解的结果。这是因为在p5.js中rotate使用的默认单位是弧度。可通过p5.js中的变量DEGREES来使用angleMode函数来替换单位为角度以生效。如例12-3所示，在setup函数中进行这一声明。
+
+**示例12-3.** 使用angleMode
+
+```
+angleMode(DEGREES);
+```
+
+现在有多少有些出乎意料之外。可以看到调用rotate函数时，会旋转该函数调用之后的每个形状（示例12-4和图12-2）。
+
+**示例12-4.** 使用rotate和angleMode
+
+```
+function setup() {
+	createCanvas(800, 300);
+	rectMode(CENTER);
+	noStroke();
+	angleMode(DEGREES);
+}
+
+function draw() {
+	background(220);
+	fill(237, 34, 93);
+	rotate(5);
+	rect(width/2, height/2, 50, 50);
+	rect(width/2+50, height/2+50, 50, 50);
+}
+```
+
+[![图12-2. 示例12-4的输出](https://i.taixr.com/2019020807365928.jpeg)](http://alanhou.org/homepage/wp-content/uploads/2019/02/2019020807365928.jpg)
+
+**图12-2.** 示例12-4的输出
+
+另一个需要注意的点是旋转是围绕着原点，即画布的左上角进行的。但是在我们控制形状时，通常是围绕着自身的原点进行旋转的。所以看上去这个函数不是特别有用。
+
+要更好地控制rotate函数，我们需要学习translate函数。translate函数将对象从原点以给定的x和y值进行偏移。示例12-5中，我们在当前的设置中使用这一函数。参见图12-3中的结果。
+
+**示例12-5.** 使用translate函数
+
+```
+function setup() {
+	createCanvas(800, 300);
+	rectMode(CENTER);
+	noStroke();
+	angleMode(DEGREES);
+}
+
+function draw() {
+	background(220);
+	fill(237, 34, 93);
+	translate(150, 0); // 使用 translate 函数
+	rotate(5);
+	rect(width/2, height/2, 50, 50);
+	rect(width/2+50, height/2+50, 50, 50);
+}
+```
+
+[![图12-3. 示例12-5的输出](https://i.taixr.com/2019020807492377.jpeg)](http://alanhou.org/homepage/wp-content/uploads/2019/02/2019020807492377.jpg)
+
+**图12-3.** 示例12-5的输出
+
+这里的操作是translate函数将画布中的所有东西向右移150像素。它移动了整个坐标系，因为旋转是围绕向右移动了150px的原点进行，而不是原始原点。
+
+闲言少絮，示例12-6和图12-4中为如何沿形状自身原点进行旋转的演示。直观展示比文字说明效果应该更好。我们先使用单个形状。
+
+**示例12-6.** 围绕自身原点旋转
+
+```
+function setup() {
+	createCanvas(800, 300);
+	rectMode(CENTER);
+	noStroke();
+	angleMode(DEGREES);
+}
+
+function draw() {
+	background(220);
+	fill(237, 34, 93);
+
+	// 围绕自身原点旋转形状
+	translate(width/2, height/2);
+	rotate(45);
+	rect(0, 0, 100, 100);
+}
+```
+
+[![图12-4. 示例12-6的输出](https://i.taixr.com/2019020808024515.jpeg)](http://alanhou.org/homepage/wp-content/uploads/2019/02/2019020808024515.jpg)
+
+**图12-4.** 示例12-6的输出
+
+本例中，我们和平常一样画一个形状，但使用了translation函数设置它的x和y坐标来替代直接向形状绘制函数中喂入值。这样通过与rectMode函数配合使用，我们可以在其中心原点画出这一形状。基本上，我们在原点绘制形状，因为所有的转换都是相对该点运行的。然后我们使用translate和rotate函数来把形状移动所需的位置和角度。使用这一方法，我们需要记住在translate函数之后调用rotate，否则旋转还是相对原始原点进行的，达不到我们所需的效果。
+
+当前这一方法以及转换函数的使用的缺点是，通常在这之后的所有绘制都会使用新的原点。解决这一问题的方法是使用push和pop函数。
+
+## push和pop函数
+
+p5.js的push函数让我们可以新建一个状态，pop函数让我们可以恢复到上一个状态。这样对每一个对象可以应用完全不同的设置，只要在push和pop函数的调用之间设置就无需担心这些设置会影响之后绘制的形状。通过例子演示更加清晰（示例12-7和图12-5）。
+
+使用当前的设置，translate和rotate函数之后的绘制都会被旋转45度。
+
+**示例12-7.** 对多个形状应用translate函数
+
+```
+function setup() {
+	createCanvas(800, 300);
+	rectMode(CENTER);
+	noStroke();
+	angleMode(DEGREES);
+}
+
+function draw() {
+	background(220);
+
+	translate(width/2, height/2);
+	rotate(45);
+
+	// 粉色矩形
+	fill(237, 34, 93);
+	rect(0, 0, 150, 150);
+
+	// 白色矩形
+	fill(255, 255, 255);
+	rect(0, 0, 75, 75);
+}
+```
+
+[![图12-5. 示例12-7的输出](https://i.taixr.com/2019020808214925.jpeg)](http://alanhou.org/homepage/wp-content/uploads/2019/02/2019020808214925.jpg)
+
+**图12-5.** 示例12-7的输出
+
+在示例12-8中，我们实现了push和pop函数，这样我们与大矩形所应用的转换进行隔离。参见图12-6中的结果。
+
+**示例12-8.** 使用push和pop函数
+
+```
+function setup() {
+	createCanvas(800, 300);
+	rectMode(CENTER);
+	noStroke();
+	angleMode(DEGREES);
+}
+
+function draw() {
+	background(220);
+
+	// translate 和 rotate 函数在 push 和 pop 函数之间
+	push();
+	translate(width/2, height/2);
+	rotate(45);
+	// 粉色矩形
+	fill(237, 34, 93);
+	rect(0, 0, 150, 150);
+	pop();
+
+	// 白色矩形
+	fill(255, 255, 255);
+	rect(0, 0, 75, 75);
+}
+```
+
+[![图12-6. 示例12-8的输出](https://i.taixr.com/201902080826433.jpeg)](http://alanhou.org/homepage/wp-content/uploads/2019/02/201902080826433.jpg)
+
+**图12-6.** 示例12-8的输出
+
+太棒了！我们在push和pop函数之间进行的操作不会影响到这些函数调用之外的任何操作。需要强调push和pop函数总是成对调用。只使用其中一个丝毫讲不通。
+
+在示例12-9中，我们更新我们的例子，我们将白色的矩形偏移到中间使用一个不同的旋转值。
+
+**示例12-9.** 对不同形状应用不同偏移
+
+```
+function setup() {
+	createCanvas(800, 300);
+	rectMode(CENTER);
+	noStroke();
+	angleMode(DEGREES);
+}
+
+function draw() {
+	background(220);
+
+	push();
+	translate(width/2, height/2);
+	rotate(45);
+	// 粉色矩形
+	fill(237, 34, 93);
+	rect(0, 0, 150, 150);
+	pop();
+
+	push();
+	translate(width/2, height/2)
+	rotate(30);
+	// 白色矩形
+	fill(255, 255, 255);
+	rect(0, 0, 75, 75);
+	pop();
+}
+```
+
+[![示例12-9的输出](https://i.taixr.com/2019020808333253.jpeg)](http://alanhou.org/homepage/wp-content/uploads/2019/02/2019020808333253.jpg)
+
+如果你希望p5.js中的转换不要这么复杂，可以尝试创建自己的函数来进行处理来对复杂性进行抽象。示例12-10中矩形函数的例子可传入第五个参数rotation。
+
+**示例12-10.** 声明自定义函数来处理转换
+
+```
+function rectC(x, y, width, height, rotation){
+	if(rotation === undefined){
+		rotation = 0;
+	}
+
+	push();
+	translate(x, y);
+	rotate(rotation);
+	rect(0, 0, width, height);
+	pop();
+}
+```
+
+这里，我们创建了一个矩形绘制函数rectC，它包裹了原有的rect 函数，并在内部使用push和pop来保存状态和设置转换，它还可接收一个rotation参数。如果未传入rotation参数，我们就会认为它的值是undefined。这时，我们设置rotation的值为0。示例12-11是使用这个函数对前面例子的重构。注意这次代码更加简洁了。
+
+**示例12-11.** 使用自定义函数来处理转换
+
+```
+function setup() {
+	createCanvas(800, 300);
+	rectMode(CENTER);
+	noStroke();
+	angleMode(DEGREES);
+}
+
+function draw() {
+	background(220);
+
+	// 粉色矩形
+	fill(237, 34, 93);
+	rectC(width/2, height/2, 150, 150, 45);
+
+	// 白色矩形
+	fill(255, 255, 255);
+	rectC(width/2, height/2, 75, 75, 30);
+}
+
+function rectC(x, y, width, height, rotation){
+	// 如果未传入rotation则设值为0
+	if(rotation === undefined){
+		rotation = 0;
+	}
+
+	push();
+	translate(x, y);
+	rotate(rotation);
+	rect(0, 0, width, height);
+	pop();
+}
+```
+
+## 总结
+
+在使用画图库时，能够对图形进行转换非常的重要。本章中，我们了解了p5.js中转换函数如何动作。我们学习了translate和rotate函数。我们还学习了angleMode函数，让我们可以设置rotate 函数使用的单位。
+
+然后我们学习了push和pop函数，并发现可以将它们与转换函数一同使用来进行状态隔离以将转换应用到单个形状上。这些函数对于JavaScript的学习不是必须的，但在使用p5.js时还是非常必要的。
+
+## 练习
+
+在进入下一章一起创建互动游戏之前尝试自己创建一些酷作品。
