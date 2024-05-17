@@ -1,0 +1,406 @@
+---
+sidebar_position: 9
+---
+
+# 第九章 对象
+
+JavaScript中包含名为对象的数据结构。对象有助于组织代码并让其有某些情况下易于使用。有两种创建对象的方式：通过对象初始化程序或构造函数。本章中我们使用对象初始化程序来创建一个对象，而构造函数像一个蓝本，可以使用new关键词来创建很多个对象实例。
+
+## 使用对象初始化程序
+
+JavaScript使用称为对象的数据结构来帮助组织数据。在JavaScript中创建对象有几种方式。其中一种方式是使用大括号，参见示例9-1。
+
+**示例9-1.** 使用大括号创建对象
+
+```
+var colors = {};
+```
+
+这些大括号称为对象初始化程序。它们创建空的对象，我们通过变量colors来保存对象的引用。
+
+现在我们可以通常在点号后添加对应的属性名向colors对象添加属性。这称为点号标记。我们也可以向这些新建的属性赋值。参见示例9-2。
+
+**示例9-2.** 向对象添加属性
+
+```
+var colors = {};
+colors.black = 0;
+colors.darkGray = 55;
+colors.gray = 125;
+colors.lightGray = 175;
+colors.white = 255;
+console.log(colors);
+```
+
+我们这时通过console.log查看对象，将会得到类似这样的结果：
+
+```
+Object {black: 0, darkGray: 55, gray: 125, lightGray: 175, white: 255}
+```
+
+我们也可以一开始就通过向大括号内传入这些属性使用相同的属性创建的对象（示例9-3）。
+
+**示例9-3.** 在大括号内添加属性
+
+```
+var colors = {
+ 	black: 0,
+ 	darkGray: 55,
+ 	gray: 125,
+ 	lightGray: 175,
+ 	white: 255,
+};
+console.log(colors);
+```
+
+对象基本上是键值对。每个键存储一个值，每个键值对组成一个对象中的属性。
+
+如示例9-4所示，要访问对象的一个值，我们同样可以使用点号标记。
+
+**示例9-4.** 访问对象的一个值
+
+```
+console.log(colors.gray);
+```
+
+在有些情况下，点号标记不能正常使用。一个例子是我们在对象中使用数字作为键。此时，我们可以转而使用中括号来访问值。参见示例9-5。
+
+**示例9-5.** 使用中括号访问值
+
+```
+console.log(colors[1]); // 假定你使用了数字作为键名
+```
+
+你猜以上表达式通过console.log将返回什么？我们将得到一个undefined的错误，因为当前colors对象中并不存在1这个键名。
+
+我们还可以在对象定义函数为键的值。这种情况下结果属性被称为方法。
+
+继续使用colors对象，我们在对象中定义一个名为paintItBlack的方法，它将背景钯设置为黑色（示例9-6）。
+
+**示例9-6.** 定义一个方法
+
+```
+var colors = {
+	black: 0,
+	darkGray: 55,
+	gray: 125,
+	lightGray: 175,
+	white: 255,
+	paintItBlack: function() {
+		background(this.black);
+	}
+};
+```
+
+示例9-7展示了使用该对象的p5.js代码。
+
+**示例9-7.** 使用对象
+
+```
+var colors;
+
+function setup() {
+	createCanvas(800, 300);
+
+	colors = {
+		black: 0,
+		darkGray: 55,
+		gray: 125,
+		lightGray: 175,
+		white: 255,
+		paintItBlack: function(){
+			background(this.black);
+		}
+	}
+}
+
+function draw() {
+	background(220);
+	
+	// 在120帧之后调用paintItBlack
+	if(frameCount > 120){
+		colors.paintItBlack();
+	}
+}
+```
+
+本例中，我们在setup和draw函数之外初始化colors变量，然后在setup函数内创建内容。毕竟我们只需创建一交内容。再后我们在frameCount大于120时调用paintItBlack方法，按照默认设置会在两秒后发生。（记住frameRate的默认值是60，这表示每少大约会渲染60帧）。
+
+要使用对象内定义的键，我们需要能引用对象。JavaScript中，有一个名为this的关键字可以进行引用（示例9-8）。使用关键字this，我们可以引用定义在对象本身上的键。
+
+**示例9-8.** 使用关键字this
+
+```
+paintItBlack: function(){
+	background(this.black);
+}
+```
+
+一旦在对象中定义了方法，可使用点号标记来调用这一方法（示例9-9）。因为我们在this实例中执行函数，我们需要在函数名后添加括号。
+
+**示例9-9.** 调用方法
+
+```
+colors.paintItBlack();
+```
+
+JavaScript（或其它实现对象的编程语言）中对象的概念让我们可以对现实世界中对象或概念进行建模。正如现实世界中对象有属性并且有时还会有行为一样，编程语言的对象可以带有描述它们是什么的属性，以及它们所进行操作的方法。
+
+在示例9-10中，我们提供了一个现实世界概念建模的编程语言对象的示例。我们将创建一个名为circle的对象。circle对象有几个属性来定义圆形是什么样，此外还有几个方法来描述其行为。
+
+**示例9-10.** 创建对象
+
+```
+var circle = {
+	 x: width/2,
+	 y: height/2,
+	 size: 50,
+};
+```
+
+circle对象中有属性x和y来定义它的坐标，以及定义大小的size属性。我们还会在其上创建一个方法，一个属性在作为函数，定义特定的行为（示例9-11）。这里定义的行为是在屏幕上画圆。
+
+**示例9-11.** 在circle对象中添加一个draw方法
+
+```
+var circle = {
+	x: width/2,
+	y: height/2,
+	size: 50,
+	draw: function() {
+		ellipse(this.x, this.y, this.size, this.size);
+	},
+};
+```
+
+本例中，我们再次使用了this关键字来访问对象的属性。关键字this基本上是对象本身的引用，允许我们在对象内调用对象的属性。现在我们可以通过circle.draw()方法调用来在屏幕上画圆：
+
+```
+circle.draw();
+```
+
+你一定暗自在想：这是最曲折的事情了。因为既然可以直接调用函数来在屏幕上画圆（示例9-12），又何必以这种颇费周折的方式画圆呢？
+
+**示例9-12.** 使用ellipse函数在屏幕上画圆
+
+```
+ellipse(width/2, height/2, 50, 50);
+```
+
+这还只是开始。我创建另一个圆的方法grow，它可以通过每次调用对圆的尺寸增加一个单位（示例9-13）。
+
+**示例9-13.** 添加grow方法
+
+```
+var circle = {
+	x: width/2,
+	y: height/2,
+	size: 50,
+	draw: function(){
+		ellipse(this.x, this.y, this.size, this.size);
+	},
+	grow: function(){
+		if(this.size < 200){
+			this.size += 1;
+		}
+	},
+};
+```
+
+现在如果在draw函数中调用这个一函数，我们会看到圆形不断变大，因为draw在p5.js中是持续被调用的。示例9-14是完整的代码，图9-1展示了它产生的输出。
+
+**示例9-14.** 使用circle对象
+
+```
+var circle;
+
+function setup() {
+	createCanvas(800, 300);
+
+	circle = {
+		x: width/2,
+		y: height/2,
+		size: 50,
+		draw: function(){
+			ellipse(this.x, this.y, this.size, this.size);
+		},
+		grow: function(){
+			if(this.size < 200){
+				this.size += 1;
+			}
+		},
+	};
+
+}
+
+function draw() {
+	background(220);
+	
+	// 圆形属性
+	fill(237, 34, 93);
+	noStroke();
+
+	circle.draw();
+	circle.grow();
+}
+```
+
+![](https://i.taixr.com/080936a5130b4b3797d221305cc55ab5.gif)
+
+**图9-1.** 示例9-14的输出
+
+如前所述，使用对象来帮助组织代码。我们没有一个单独的函数来操作圆形，但有一个circle对象来在其中带有这些函数和属性。这在某些情况下将利用我们对代码进行推理。
+
+## 使用构造函数
+
+JavaScript中还有另一种方式创建对象，即通过对象（示例9-15）。在对象内进行的创建函数的声明，与对象初始化程序中的动作方式很相似。注意我们在函数使用了p5.js内置变量width和height。要在该函数内使用这些对象，需要在createCanvas函数之后调用。
+
+**示例9-15.** 使用函数在创建对象
+
+```
+var Circle = function(){
+	this.x = width/2;
+	this.y = height/2;
+	this.size = 50;
+	this.draw = function(){
+		ellipse(this.x, this.y, this.size, this.size);
+	};
+	this.grow = function(){
+		if(this.size < 200){
+			this.size += 1;
+		}
+	};
+};
+```
+
+创建对象的函数称为构造函数。可把它看作一个模板或一个蓝图，用于创建从该构造函数中获取属性的新对象。
+
+示例9-16可更好的解释以上所说的内容。假设我们想要像前例那样画一个圆，来展示Circle构造函数中定义的行为。此是，我们不直接使用构造函数来实现，而是使用它来实例化一个以该模板函数建模的新圆。
+
+**示例9-16.** 使用构造函数
+
+```
+var myCircle = new Circle();
+```
+
+我们使用Circle构造函数以及关键字来创建一个名为myCircle的新的圆的实例，它从构造函数中获取属性。基本上new关键字让我们可以从构造函数创建对象的一个新的实例。可把Circle构造函数看作一个蓝图，myCircle看作根据蓝图创建的实际的圆。现在我们可以通过调用 draw 方法来在屏幕上画出新创建的圆（示例9-17）。
+
+**示例9-17.** 调用draw方法
+
+```
+myCircle.draw();
+```
+
+**示例9-18.** 使用构造函数
+
+```
+var circle;
+
+function setup() {
+	createCanvas(800, 300);
+
+	// 使用Circle构造函数实例化一个新圆
+	circle = new Circle();
+}
+
+function draw() {
+	background(220);
+	
+	// 圆形属性
+	fill(237, 34, 93);
+	noStroke();
+
+	circle.draw();
+	circle.grow();
+}
+
+var Circle = function(){
+	this.x = width/2;
+	this.y = height/2;
+	this.size = 50;
+	this.draw = function(){
+		ellipse(this.x, this.y, this.size, this.size);
+	};
+	this.grow = function(){
+		if(this.size < 200){
+			this.size += 1;
+		}
+	};
+};
+```
+
+这种方法的美妙之处在于我们可以根据同一蓝图重复创建新圆。并且因为这些圆是单独的实体或实例，它们可以带有不同的属性。参见示例9-19和图9-2。
+
+```
+var circle_1;
+var circle_2;
+var circle_3;
+
+
+function setup() {
+	createCanvas(800, 300);
+
+	// 实例化新圆
+	circle_1 = new Circle();
+	circle_2 = new Circle();
+	circle_3 = new Circle();
+}
+
+function draw() {
+	background(220);
+	
+	// 圆形属性
+	fill(237, 34, 93);
+	noStroke();
+
+	circle_1.draw();
+	circle_1.grow();
+
+	circle_2.x = 150;
+	circle_2.draw();
+	circle_2.grow();
+
+	circle_3.x = 650;
+	circle_3.draw();
+	circle_3.grow();
+}
+
+var Circle = function(){
+	this.x = width/2;
+	this.y = height/2;
+	this.size = 50;
+	this.draw = function(){
+		ellipse(this.x, this.y, this.size, this.size);
+	};
+	this.grow = function(){
+		if(this.size < 200){
+			this.size += 1;
+		}
+	};
+};
+```
+
+![示例9-19的输出](https://i.taixr.com/4f7230bc2ed04127a8c7b75a1397be01.gif)
+
+**图9-2.** 示例9-19的输出
+
+本例中我们在p5.js的函数之外创建了三个变量，名称分别为circle_1, circle_2和circle_3。这些变量在p5.js的函数之外创建，这样在两个函数的作用域内均可使用。
+
+我们通过new关键字来作用于Circle构造函数来把这些变量创建为Circle实例。现在我们有了三个独立的圆形对象，我们就可以在draw函数内修改它们的属性，这样就可以得到不同的结果了。
+
+需要强调的一件事是我们为构造函数的名称首字母使用了大写。我们使用大写字母来提醒我们自己以及其他人该函数是一个构造函数，我们需要使用关键字new来进行调用。
+
+使用new关键字来调用构造函数非常重要。如果不使用，则不会正常运行，因为构造函数内的关键字this将不会引用实例对象，而是全局对象。
+
+使用大写字母并不是一条规则而是一种惯例。没人会强制你这么做。但都会预期你遵循这一惯例，因为如果不知道这个函数是构造函数，就不会使用关键字new来调用，然后产生意想不到的结果。
+
+## 总结
+
+本章中我们学习了JavaScript对象。简单地说，对象是一种代码组织方式。有两种创建对象的方法。一种方法是使用对象初始化程序，另一种是使用构造函数。
+
+我们还学习了使用点号标记以及中括号标记来访问对象的属性。关键字this让我们可以在对象自身中引用对象的属性。
+
+在不同的编程语言中有一整套称为面向对象编程的编程范式，使用对象来组织代码并让其结构更清晰。使用p5.js我们无需创建对象来组织我们的代码，但出于以下两个原因我介绍了对象：
+
+-   它们是JavaScript语言的基本组成部分。如果你之后需要了解该语言的更多知道，就需要知道对象的工作原理。
+-   JavaScript有一些其它的基于对象的内置结构，因此我们进一步熟悉对象也很重要。
