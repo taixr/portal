@@ -5,13 +5,13 @@ import type * as Preset from '@docusaurus/preset-classic';
 const config: Config = {
   title: 'Taixr',
   tagline: 'All about AI and XR',
-  favicon: 'img/favicon.ico',
+  favicon: 'https://i.taixr.com/logo.jpeg',
 
   // Set the production url of your site here
-  url: 'https://taixr.github.io',
+  url: 'https://www.taixr.com',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/portal/',
+  baseUrl: '/',
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
@@ -61,15 +61,15 @@ const config: Config = {
   themeConfig: {
     metadata: [
       { name: 'keywords', content: 'ai, 人工智能, AR, VR, XR, MR, 增强现实，虚拟现实, 混合现实, visionOS, Vision Pro' },
-      { name: 'twitter:card', content: 'img/docusaurus-social-card.jpg' },
+      { name: 'twitter:card', content: 'https://i.taixr.com/logo.jpeg' },
     ],
     // Replace with your project's social card
-    image: 'img/docusaurus-social-card.jpg',
+    image: 'https://i.taixr.com/logo.jpeg',
     navbar: {
       title: 'Taixr',
       logo: {
         alt: 'Taixr, all about AI & AR',
-        src: 'img/logo.svg',
+        src: 'https://i.taixr.com/logo.jpeg',
       },
       items: [
         {
