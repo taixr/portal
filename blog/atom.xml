@@ -6,7 +6,7 @@
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://www.taixr.com/blog"/>
     <subtitle>Taixr Blog</subtitle>
-    <icon>https://www.taixr.com/img/favicon.ico</icon>
+    <icon>https://www.taixr.com/https://i.taixr.com/logo.jpeg</icon>
     <entry>
         <title type="html"><![CDATA[Welcome]]></title>
         <id>https://www.taixr.com/blog/welcome</id>
