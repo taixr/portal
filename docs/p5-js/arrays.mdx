@@ -1,0 +1,460 @@
+---
+sidebar_position: 10
+---
+
+# 第十章 数组
+
+
+数组是JavaScript中另一种有用的数据结构。它们是带序号索引存储数据的序列集合，并基本对象，让某些运算更易于执行。
+
+本章中我们将使用push方法来向数组添加数据。还将学习余数运算符，通过它可获得在0和指定数据之间的序列值。
+
+## 使用push方法
+
+还记得我们是使用大括号有创建空对象吧。我们可以类似的方式通过中括号来创建空数组（示例10-1）。
+
+**示例10-1.** 创建空数组
+
+```
+var arr = [];
+```
+
+本例中，我们创建了一个空数组并使用名为arr变量来存储该数组。现在如果想要向该数组添加元素，我们可使用数组对象所带的push方法（示例10-2）。
+
+**示例10-2.** 向数组添加元素
+
+```
+var arr = [];
+arr.push(1);
+arr.push("hello world");
+arr.push({"name":"value"});
+console.log(arr);
+```
+
+本例中，我们向前面的空数组推入的三个新值。第一个中推入是数字类型，第二行向数组推入了字符串类型，第三行中推入了对象类型。
+
+现在使用console.log来查看内容，会在屏幕上看到：
+
+```
+[1,"hello world",{"name":"value"}]
+```
+
+注意我们使用了不同的数据类型和对象来添加到数组中。数组中可包含任意对象，甚至是其它对象。和JavaScript中的对象一样，我们可以在数组的创建时添加所需值，只需在中括号中使用逗号来进行分隔即可。下面我们来创建一个带有4个数字的数组（示例10-3）。
+
+**示例10-3.** 使用不同数据类型创建数组
+
+```
+var arr = [15, 40, 243, 53];
+console.log(arr);
+```
+
+我们可以使用自动生成的下标索引来访问数组的各项。需要注意的一点是数组存储的数据下标从0开始。访问数据组中的某一项，我们可以输入存储数组的变量名，然后在中括号中使用索引下标来引用该下标处的数据项（参见示例10-4）。数字0引用数组的第一项，即15，下标数字1引用第二项，以此类推...
+
+**示例10-4.** 访问数组中的项目
+
+```
+var arr = [15, 40, 243, 53];
+var firstItem = arr[0];
+console.log(firstItem);
+```
+
+如果尝试访问数组中不存在的项，得到的值是undefined。这很合理，因该项确实未被定义。回忆一下，对象在我们访问不存在的属性也是返回undefined值。
+
+让我们来看看数组数据结构如何简化编程。首先使用一个简单的示例（示例10-5）。假设我们想要创建五个大小不同的圆。以当前的知识，我们需要创建五个不同的变量并为这些变量赋所需的值。然后使用不同的变量来调用ellipse函数5次。
+
+**示例10-5.** 画不同大小的圆
+
+```
+var size1 = 200;
+var size2 = 150;
+var size3 = 100;
+var size4 = 50;
+var size5 = 25;
+
+
+function setup() {
+	createCanvas(800, 300);
+}
+
+function draw() {
+	// 圆的属性
+	fill(237, 34, 93);
+	strokeWeight(2);
+
+	ellipse(width/2, height/2, size1, size1);
+	ellipse(width/2, height/2, size2, size2);
+	ellipse(width/2, height/2, size3, size3);
+	ellipse(width/2, height/2, size4, size4);
+	ellipse(width/2, height/2, size5, size5);
+}
+```
+
+我们只是在屏幕上画了5个圆，但这个方案看起来已经很有负担了。如果要画100个圆甚至是1000个圆呢。这时就可以使用数组来让操作更为简便。
+
+首先，让我们创建一个所需圆尺寸的数组。前面说过，我们可以通过索引下标来访问数组中的各项。我们将通过这一知识来获取数据中的所需项。参见示例10-6。
+
+**示例10-6.** 使用数组存储尺寸值
+
+```
+var sizes = [200, 150, 100, 50, 25];
+
+function setup() {
+	createCanvas(800, 300);
+}
+
+function draw() {
+	// 圆的属性
+	fill(237, 34, 93);
+	strokeWeight(2);
+
+	ellipse(width/2, height/2, sizes[0], sizes[0]);
+	ellipse(width/2, height/2, sizes[1], sizes[1]);
+	ellipse(width/2, height/2, sizes[2], sizes[2]);
+	ellipse(width/2, height/2, sizes[3], sizes[3]);
+	ellipse(width/2, height/2, sizes[4], sizes[4]);
+}
+```
+
+这看起来已经好很多了。但还是有很多重复之处。我们反复的输入了同样的内容来调用ellipse函数，其中变化的只有下标值。模式已经很清晰了：我们可以添加一个结构来创建循环通过增量来调用ellipse函数5次，这样就无需重复输入了。
+
+所幸我们知道如何循环来保持代码简洁。示例10-7使用for循环重写了对应代码。
+
+**示例10-7.** for循环代码片断
+
+```
+var sizes = [200, 150, 100, 50, 25];
+for(var i=0; i<5; i++){
+	ellipse(width/2, height/2, sizes[i], sizes[i]);
+}
+```
+
+示例10-8和10-1显示了p5.js中的示例代码：
+
+**示例10-8.** for循环完整代码
+
+```
+var sizes = [200, 150, 100, 50, 25];
+
+function setup() {
+	createCanvas(800, 300);
+}
+
+function draw() {
+	// 圆的属性
+	fill(237, 34, 93);
+	strokeWeight(2);
+
+	for(var i=0; i<5; i++){
+		ellipse(width/2, height/2, sizes[i], sizes[i]);
+	}
+}
+```
+
+[![示例10-5. 画不同大小的圆](https://i.taixr.com/2019020702301331.jpeg)](http://alanhou.org/homepage/wp-content/uploads/2019/02/2019020702301331.jpg)
+
+**示例10-1.** 使用 for 循环画圆
+
+注意到我们来 for 循环头部使用了数字5了吗？使用这一数字是因为我们使用的数组中有5个数据项。所以如果数组内有6个数据项，就应更新该值为6。但这是有问题的，如果我们扩大数组但忘记更新这一值了呢？幸好我们可以调用length来进行替换，它将会排架数组的数据项数量。我们可以重写以上代码来使用length属性（示例10-9）。
+
+**示例10-9.** 使用数组length属性
+
+```
+var sizes = [200, 150, 100, 50, 25];
+
+function setup() {
+	createCanvas(800, 300);
+}
+
+function draw() {
+	// 圆的属性
+	fill(237, 34, 93);
+	strokeWeight(2);
+
+	for(var i=0; i<sizes.length; i++){
+		ellipse(width/2, height/2, sizes[i], sizes[i]);
+	}
+}
+```
+
+现在我们的代码已经非常简洁，并且很易于扩展。我们将新的值保存在sizes数组中，然后就会画出相应数量的圆。我们可以使用random函数来创建另一个 for 循环使用随机数创建数组（示例10-10和图10-2)）。
+
+**示例10-10.** 使用random函数
+
+```
+var sizes = [];
+
+function setup() {
+	createCanvas(800, 600);
+	noFill();
+	// 创建对应数量的随机值数组
+	for(var i=0; i<100; i++){
+		var randomValue = random(5, 500);
+		sizes.push(randomValue);
+	}
+}
+
+function draw() {
+        background(255);
+	for(var i=0; i<sizes.length; i++){
+		ellipse(width/2, height/2, sizes[i], sizes[i]);
+	}
+}
+```
+
+[![图10-2. 示例10-10的输出](https://i.taixr.com/2019020712163484.jpeg)](http://alanhou.org/homepage/wp-content/uploads/2019/02/2019020712163484.jpg)
+
+**图10-2.** 示例10-10的输出
+
+我们来过一遍本例。首先，我们在draw函数内设置背景色为白色。同时，调用了noFill函数，这样在画形状时不会有填充色。这些都是出于样式的选择。我们创建了一个空数组，并向其添加了随机数字。然后创建一个循环进行了100次遍历。在该循环中，为每次遍历我们使用了 random 函数来创建了5到500之间的随机值，我们使用 push 方法将生成的随机值推入sizes数组内。
+
+下一步相同，我们使用已有的sizes数组创建圆形。注意本程序中的单个值的变化性，生成的随机值数量，本处为100，控制着整体输出结果。这是一个很好的例子，展示了简单的编程结构如何创建健壮的和可扩展的方案。
+
+## 使用数组
+
+让我们使用数组来实现另一种可视化。我们计划创建一个动画，以相应样式按顺序持续显示给定的单词。
+
+首先我们再了解下p5.js中创建文本的知识。我们使用text函数，它接收三个参数：要显示的文本、文本的x和y坐标位置。借助这一知识，我们在屏幕上浅色背景中显示单词"JavaScript"。
+
+**示例10-11.** 使用text函数
+
+```
+function setup() {
+	createCanvas(800, 300);
+}
+
+function draw() {
+	background(200);
+	text('JavaScript', width/2, height/2);
+}
+```
+
+[![图10-3. 示例10-11的输出](https://i.taixr.com/2019020713012019.jpeg)](http://alanhou.org/homepage/wp-content/uploads/2019/02/2019020713012019.jpg)
+
+**图10-3.** 示例10-11的输出
+
+注意我们创建的文本并没有垂直对齐。看起来没有居中。这可轻易地通过调用p5.js的textAlign函数来解决（示例10-12）。只需在setup函数中调用该函数并传入CENTER值即可。它会进行垂直排列。我们可再次向该函数传入CENTER来让文本水平居中。
+
+**示例10-12.** 使用textAlign函数
+
+```
+textAlign(CENTER, CENTER);
+```
+
+下一步，我们格式化文本让显示更美观些。在示例10-13中，我们使用textSize函数设置文本的尺寸为45像素并通过fill函数设置文本的颜色为白色（参见图10-4中的结果）。
+
+**示例10-13.** 使用textAlign并为文本添加样式
+
+```
+function setup() {
+	createCanvas(800, 300);
+	textAlign(CENTER, CENTER); // 文本居中
+}
+
+function draw() {
+	background(200);
+	fill(255); // 文本颜色
+	textSize(45); // 文本大小
+	text('JavaScript', width/2, height/2);
+}
+```
+
+[![图10-4. 示例10-13的输出](https://i.taixr.com/2019020713131566.jpeg)](http://alanhou.org/homepage/wp-content/uploads/2019/02/2019020713131566.jpg)
+
+**图10-4.** 示例10-13的输出
+
+完美！下例中，我们将创建一个单词组成的数组并持续循环显示这些单词。首先创建我们要使用的数组。我们在draw函数外创建这一数组，因为我们只需要创建一次。如果在draw函数内进行声明，那么在每次调用draw函数时这一数组都会不断地被创建和摧毁（默认情况下每秒钟大约60次）。
+
+我们在draw和setup函数之外创建一个名为words的变量（示例10-14）。因为该变量在draw和setup函数之外初始化，我们可以在这两个函数中使用该变量。
+
+**示例10-14.** 创建words变量
+
+```
+var words = ['I', 'love', 'programming', 'with', 'JavaScript'];
+```
+
+下一步我们需要设计一种方式来持续生成0和数组长度之间的值来引用数组中的某一项。要实现这个，我们可以使用取余运算符（%）。
+
+## 使用取余运算符
+
+取余运算符与我们前面看到的其它运算符（如加号和减号）都不同，所以了解它如何运作可能会有所帮助。传入两个值，取余运算符返回第一个数除以第二个数的余数。%是取余运算符的符号表示。
+
+在示例10-15中可以看到，传入的第一个值不断增长，取余运算符让我们可以重复循环第二个值减一。
+
+**示例10-15.** 取余运算符
+
+```
+console.log(1 % 6) // 返回1.
+console.log(2 % 6) // 返回2.
+console.log(3 % 6) // 返回3.
+console.log(4 % 6) // 返回4.
+console.log(5 % 6) // 返回5.
+console.log(6 % 6) // 返回0.
+console.log(7 % 6) // 返回1.
+// 等等..
+```
+
+你可能会在想：“我怎么会知道这些？”类似这会是很难想通的事情，如果我们知道取余运算符是什么但不知道的实际用途的话。这非常正常。我们需要看到其他人使用来知道某一运算符或结构可以作为某一用途使用。有时这是一个经验和实践而非知识方面的事情。
+
+如果我持续地以数组长度向取余运算符传入增量的值。将会生成从0到数组长度之间的值。
+
+在p5.js中，这种持续的值的传入可以通过变量frameCount。还记得frameCount告诉我们draw函数到目前为止的调用次数。如示例10-16所示，变量frameCount和数组words的长度可创建0到数组长度减1之间的值。
+
+**示例10-16.** 使用取余运算符
+
+```
+var currentIndex = frameCount % words.length;
+```
+
+我们可以使用console.log语句进行输出来验证是否在创建对应范围的值。但更好地方式可能是使用text函数来通过p5.js显示这些值。比竟我们是视觉方面的学习者。
+
+需要注意的是现在显示数字会太快了，这让我们很难了解发生了什么。我们应让p5.js放慢速度以免太难阅读其中的文字。一种方式是使用frameRate函数来降低帧率。如示例10-17中那样，我们修改 setup 函数中的frameRate值为3。参见图10-5中的结果。
+
+**示例10-17.** 使用frameRate减速
+
+```
+var words = ['I', 'love', 'programming', 'with', 'JavaScript'];
+function setup() {
+	createCanvas(800, 300);
+	textAlign(CENTER, CENTER); // 文本居中
+	frameRate(3); // 使用更小的帧率来对文本减速
+}
+
+function draw() {
+	var currentIndex = frameCount % words.length;
+	background(200);
+	fill(255); // 文本颜色
+	textSize(45); // 文本大小
+	text(currentIndex, width/2, height/2);
+}
+```
+
+![](https://i.taixr.com/0da81b04ab3547b9a223975c69ab2c2d.gif)
+
+**图10-5.** 示例10-17的输出
+
+太棒了！使用这段我们应该可以看到数值范围不断地在屏幕上输出。但我们对在屏幕上显示数字并不感兴趣，而是显示数组中的单词。以现有的知识这也非常容易实现。通过使用中括号符号就可以访问数组内的各项值。
+
+如示例10-18中所示，我们来创建另一个名为currentWord的变量。该变量存储currentIndex变量所对应的当前单词。现在就可以在text函数中使用这个变量来替换currentIndex了。
+
+**示例10-18.** 创建变量currentWord
+
+```
+var currentWord = words[currentIndex];
+```
+
+![](https://i.taixr.com/0dc2e28e36c44f00ab2a2548c76812e9.gif)
+
+我们已基本上完成了，但还想做另一件事，即对每个单词修改背景色，因为现在的效果并不美观。
+
+我们将创建另一个名为colors的数组来包含颜色信息。然后可以将其以数组传入给p5.js的颜色函数，效果和一个个传值是一样的。
+
+所以，如示例10-19中那样，两个表达式会创建一样的颜色。
+
+**示例10-19.** 使用数组作为值传给fill函数
+
+```
+fill(255, 0, 0);
+fill([255, 0, 0]);
+```
+
+我们将创建数组colors来包含所需使用的颜色数组。可以自己选择颜色 ，但通常很难让颜色保持美观。
+
+Adobe有一个名为[Adobe Color CC](https://color.adobe.com/)的网页，可在那里找寻我们用在设计中的颜色主题。我将使用它来找一个本处视觉用到颜色主题。
+
+在Adobe Color CC的 Explore标签下，可以选择一个想要的主题。悬浮在该主题上，然后点击Edit Copy。这会引导你进入一个查看颜色的 RGB 值的页面。示例10-20是从该网站选取的一个样例。
+
+**示例10-20.** Adobe Color CC颜色样例
+
+```
+var colors = [
+ 	[63, 184, 175],
+ 	[127, 199, 175],
+ 	[218, 216, 167],
+ 	[255, 158, 157],
+ 	[255, 61, 127],
+];
+```
+
+注意这里我对数据的格式化略有不同，因为我不相要行太长影响到我伴侣代码的易读性。这只是一个样式上的选择。
+
+现在我们已经选择用于修改每帧背景色 fill 函数内的颜色值。示例10-21显示了代码的最终版本。
+
+**示例10-21.** 最终代码
+
+```
+var words = ['I', 'love', 'programming', 'with', 'JavaScript'];
+var colors = [
+ 	[63, 184, 175],
+ 	[127, 199, 175],
+ 	[218, 216, 167],
+ 	[255, 158, 157],
+ 	[255, 61, 127],
+];
+function setup() {
+	createCanvas(800, 300);
+	textAlign(CENTER, CENTER); // 文本居中
+	frameRate(3); // 使用更小的帧率来对文本减速
+}
+
+function draw() {
+	var currentIndex = frameCount % words.length;
+	var currentColor = colors[currentIndex];
+	var currentWord = words[currentIndex];
+	background(currentColor);
+	fill(255); // 文本颜色
+	textSize(45); // 文本大小
+	text(currentWord, width/2, height/2);
+}
+```
+
+![](https://i.taixr.com/88e2b21ab169498898dfa52ec469ba74.gif)
+
+## 总结
+
+本章中我们学习了JavaScript的一种数据结构数组。数组让我们以序列的方式存储不同类型的多个值。存储在数组中的值中通过中括号标记符来访问。
+
+我可以在数组创建的一开始或使用push方法在创建后向数组中添加值。数组在循环中尤其有用。循环让我们可以很轻松地访问数组中各数据项。
+
+我们还学习了取余运算符。取余运算符返回了相除运算两个值的余数。使用该运算符我们可以获取0和所需值之前的序列值。
+
+## 练习
+
+创建一个名为countdown的函数，接收两个参数：数字和消息（参见示例10-22）。创建一个与上例相似的视觉效果，显示从指定数字到0的倒计数。在倒计结束时，会在屏幕上显示每个参数给定的信息。
+
+可再添加一个参数来控制屏幕上显示各个数字的时间。
+
+示例10-22.
+
+```
+countdown(10, "Launch!");
+```
+
+**译者补充，仅供参考：**
+
+```
+function setup() {
+	createCanvas(800, 300);
+	textAlign(CENTER, CENTER); 
+	frameRate(2);
+}
+
+function draw() {
+	background(220);
+	fill(255); // 文本颜色
+	textSize(45); // 文本大小
+	countdown(10, 'Launch!');
+}
+
+function countdown(number, message){
+	var currentOutput;
+	if(frameCount <= number + 1 ){
+		currentOutput = number + 1 - frameCount % (number+2);
+	}else{
+		currentOutput = message;
+	}
+
+	text(currentOutput, width/2, height/2);
+}
+```
+
+![](https://i.taixr.com/0fd6d53ae50a40a8bce36f931a4b9657.gif)
