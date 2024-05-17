@@ -1,0 +1,262 @@
+---
+sidebar_position: 11
+---
+
+# 第十一章 事件
+
+在[第六章](https://alanhou.org/p5-js-more-variables/)中，我们学习了名为mouseIsPressed的p5.js变量，它在按下鼠标时值为true而其它情况下值为false。
+
+我们还了解到这并不是捕获用户输入很好的方式，因为draw函数的执行速度让这一变量的准确更新变得很困难。本章中我们会复习p5.js中处理用户输入的其它方式，即解决这一问题的事件。使用事件，我们可以在draw函数循环之外捕获用户输入。
+
+借助于事件处理系统我们可以声明p5.js中非常多的事件函数。这里我们将着重看两个事件函数：mousePressed和keyPressed。
+
+## 使用mousePressed
+
+与draw和setup函数类似，声明这一函数使用了特定名称，由p5.js进行特殊处理。
+
+在p5.js的代码中，以mousePressed这一名称声明的函数在每次鼠标键按下时被触发。我们来重写前面的例子将mouseIsPressed的使用修改为mousePressed事件函数（示例11-1）。
+
+**示例11-1.** 使用mousePressed事件函数
+
+```
+var toggle = true;
+
+function setup() {
+	createCanvas(800, 300);
+	rectMode(CENTER);
+}
+
+function draw() {
+	// 根据toggle 值来显示不同的背景色
+	if(toggle === true){
+		background(1, 186, 240);
+	}else{
+		background(250, 150, 50);
+	}
+
+	// 声明变量
+	var x = width / 2;
+	var y = height / 2;
+	var size = 200;
+
+	if(frameCount < 60){
+		size = size + frameCount;
+	}else{
+		size = size + 60;
+	}
+
+	// 圆形
+	fill(237, 34, 93);
+	noStroke();
+	ellipse(x, y, size, size);
+
+	// 矩形
+	fill(255);
+	rect(x, y, size*0.75, size*0.15);
+}
+
+function mousePressed(){
+	toggle = !toggle; // 对toggle值取反
+}
+```
+
+好吧，这是一个非常简单的重构。我们只是声明了一个不由自己执行的函数，执行由p5.js在相应操作时进行处理。
+
+还有很多其它事件函数。完整列表请参见[官方网站](https://p5js.org/reference/#group-Events)。
+
+## 使用keyPressed
+
+另一个值得学习的事件函数是keyPressed函数。正如名称的本身意思，keyPressed函数在按下键盘按键时会被触发。在示例11-2中，我们快速地使用一个新的草图来测试该函数的运行。
+
+**示例11-2.** 使用keyPressed函数
+
+```
+function setup() {
+	createCanvas(800, 300);
+}
+
+function draw() {
+	background(220);
+}
+
+function keyPressed(){
+	console.log('pressed');
+}
+```
+
+本例中，每次按下键盘按键时，都会看到终端中显示pressed消息。在示例11-3中，我们再来看一个更深入的示例，每按下一次键就会在画布中创建一个形状。
+
+**示例11-3.** 每次按下键画一个形状
+
+```
+var pressed;
+
+function setup() {
+	createCanvas(800, 300);
+	background(220);
+}
+
+function draw() {
+	if(pressed === true){
+		ellipse(
+			random(width),
+			random(height),
+			50,
+			50
+		);
+	}
+	pressed = false;
+}
+
+function keyPressed(){
+	pressed = true;
+}
+```
+
+在按下按键时会创建形状（图11-1）。
+
+[![图11-1. 示例11-3的输出](https://i.taixr.com/2019020805382153.jpeg)](http://alanhou.org/homepage/wp-content/uploads/2019/02/2019020805382153.jpg)
+
+**图11-1.** 示例11-3的输出
+
+注意一些事情。首先，我们把background函数放到setup函数下了。这可以保证所画的图形保留在屏幕上。如果我们在draw函数内调用background函数，就会在所有帧之上作画，这本用例中是不需要的。同时，我们把ellipse函数分散在多行上，这是为了增强可读性。
+
+我们有一个名为pressed的全局变量。每按下一次键，我们都会将该全局变量设为true。这时draw函数会在屏幕上渲染一个圆形，因为执行了条件语句。然后draw函数马上会把pressed的值再设为false，这样就只为画一个圆。
+
+在示例11-4中，我们将改进这个示例来让其变得更加美观些。现在，每个圆看起来太整齐划一了，并且颜色也有点单调。我们修改代码让每次画时，使用0和200之间的随机尺寸以及一个预定义颜色列表中的一个随机颜色（图11-2）。
+
+**示例11-4.** 修改尺寸和颜色
+
+```
+var pressed;
+var colors = [];
+
+function setup() {
+	createCanvas(800, 300);
+	background(0);
+	colors = [
+		[245, 3, 155],
+		[13, 159, 215],
+		[148, 177, 191],
+		[100, 189, 167],
+		[242, 226, 133],
+		[176, 230, 110],
+		[123, 90, 240]
+	];
+}
+
+function draw() {
+	noStroke();
+	if(pressed === true){
+		var randomIndex = parseInt(random(colors.length), 10);
+		// 将给定数字转化为整型
+		var randomSize = random(200);
+
+		fill(colors[randomIndex]);
+		ellipse(
+			random(width),
+			random(height),
+			randomSize,
+			randomSize
+		);
+	}
+	pressed = false;
+}
+
+function keyPressed(){
+	pressed = true;
+}
+```
+
+[![图11-2. 示例11-4的输出](https://i.taixr.com/2019020806001811.jpeg)](http://alanhou.org/homepage/wp-content/uploads/2019/02/2019020806001811.jpg)
+
+**图11-2.** 示例11-4的输出
+
+要在每次按下键时选取一个随机颜色，我们需要生成一个0和colors数组长度减1之间的随机整数。我们减去了1是因为数组索引从0开始计算。
+
+生成一个0和colors数组长度减1之间的随机数，我们只需要把随机函数写成random(colors. length)即可。这样就会生成一个从0到colors数据项数量（不包含该数）中的不一个数。但还有一个问题，就是生成的是一个浮点数，表示它是一个小数。而我们需要一个整型数字来访问数组中的数据项。因此我们需要将小数转换成整数。有几种方法来解决这一问题。一种方式是使用p5.js的floor函数，它会将浮点数舍入为最相邻较小的整数。另一种方法是使用原生的名为parseInt的JavaScript函数，在该值能被转换时将给定值转换为整型。我们无法传入一个字符串值来转换为整型。
+
+如例11-5所示，我们需向parseInt函数传入第二个参数来设置计算所使用的数字进制。基本上都会使用10来作为进制。对浮点数使用parseInt函数就是这样了。
+
+**示例11-5.** 对浮点数使用parseInt函数
+
+```
+var num = parseInt(0.5, 10);
+console.log(num); // 结果为0
+```
+
+能够识别按下了键只是问题的一部分。我们还应能识别按下的按钮是哪个。在keyPressed函数内，理论上我们通过变量keyCode来识别按下的按键。keyCode变量以编码的形式存储用户所按下的最后一按键，比如用户按下了a，返回的值是65，按下b返回66等等。
+
+因为p5.js是一个很有帮助的库，通过预置的变量可以轻易的识别部分按键：BACKSPACE, DELETE, ENTER, RETURN, TAB, ESCAPE, SHIFT, CONTROL, OPTION, ALT, UP_ARROW, DOWN_ARROW, LEFT_ARROW, RIGHT_ARROW。
+
+比如，示例11-6为一个小的代码片断，在按下Enter键时执行console.log语句。
+
+**示例11-6.** 使用keyCode值
+
+```
+function setup() {
+	createCanvas(800, 300);
+}
+
+function draw() {
+	background(220);
+}
+
+function keyPressed(){
+	if(keyCode === ENTER){
+		console.log('按下了Enter键');
+	}	
+}
+```
+
+使用变量keyCode，我们通过一点解码就可以识别按下了哪个字母数字键。但还有另一个变量也可以用于字母数字字符，变量名为key。变量key存储按下的字母数字键的值，这让我们更易于识别按下的键。
+
+## 总结
+
+本章中我们学习了处理事件的一种更好的方式，即事件函数。我们集中讲解了两个事件函数：mousePressed和keyPressed。
+
+我们还学习了keyPressed函数中可以使用的一些变量：key和keyCode。使用key易于识别字母数字按键，而keyCode用于监测其它按键更为理想，因为可以使用它来比对p5.js变量，如ENTER, SPACE等。这时识别这些按钮就更容易了。
+
+JavaScript部分的知识有，我们学习了parseInt函数可用于将数值（也包括体现为数字的字符串）转化为整型数字。
+
+## 练习
+
+在屏幕上画一个矩形，通过方向键可以控制矩形的位置。
+
+**译者补充，仅供参考：**
+
+```
+var x, y;
+function setup() {
+	createCanvas(800, 300);
+	rectMode(CENTER);
+	x = width/ 2;
+	y = height /2;
+}
+
+function draw() {
+	background(1, 186, 240);
+	var size = 50
+
+	fill(255);
+	noStroke();
+	rect(x, y, size, size);
+}
+
+function keyPressed(){
+	if(keyCode === UP_ARROW){
+		y--;
+	}
+	if(keyCode === DOWN_ARROW){
+		y++;
+	}
+	if(keyCode === LEFT_ARROW){
+		x--;
+	}
+	if(keyCode === RIGHT_ARROW){
+		x++;
+	}	
+}
+```
+
+![](https://i.taixr.com/61abb004e3e94377b6d838ef70d9738c.gif)
