@@ -1,0 +1,1193 @@
+---
+sidebar_position: 13
+---
+
+# 第十三章 最终项目
+
+本章中，我们将使用在全书中所学习的知识来创建一个游戏。同时我们还可以学习一些技巧。使用p5.js库来创建一个简单游戏非常惊艳并且表明了这个 JS 库的强大。
+
+游戏会非常简单。它是一个输入速度游戏，向玩家快速显示数字并期望他们输入与屏幕上相同的数字。如果在给定时间 内输入了正确的数字，玩家就会复仇。我们记录得分并在游戏结束时显示。展示的游戏视觉体验如果够强的话会非常棒，但我们的核心是让游戏在逻辑上正确。
+
+以下是对我们所需创建内容的分解：
+
+-   我们需要每过 N 帧显示一个数字
+-   屏幕上的数字不应是静态的，应对其添加动画来让数字的阅读更简单或更复杂
+-   直到下一个数字显示或玩家按下键匹配数字，前一个数字应保留在屏幕上
+-   如果玩家的输入与屏幕上的数字相同，则显示成功的消息。否则提示失败。
+-   我们应记录成功和失败的数量。在 X 帧或尝试后，向用户显示结果。
+-   在游戏结束后需要给到一种重启的方式
+
+## 准备开始
+
+我们清单的第一项是能够按照一个有规律的间隔显示单个数字。我们曾使用过取余运算符%实现了类似的功能。这里我们每过100帧在屏幕上显示0到9之间的数字（示例13-1）。
+
+**示例13-1.** 每过100帧显示一个随机整数
+
+```
+var content;
+function setup() {
+	createCanvas(800, 300);
+	textAlign(CENTER, CENTER);
+}
+
+function draw() {
+	background(220);
+	if(frameCount === 1 || frameCount % 100 === 0){
+		content = parseInt(random(10), 10);
+	} 
+
+	text(content, width/2, height/2);
+}
+```
+
+在本例中，我们首先初始化了一个名为content的全局变量。然后在draw函数中使用了random函数来在第1帧或每100帧时生成一个随机数，将其值保存在变量content中。但是，random函数的问题是它返回的是一个浮点数。在我们的游戏中，需要使用类型为整型的整数。因此我们使用了parseInt函数来将浮点数转化成整型数字。parseInt函数要求我们传入第二个参数来设置运算使用的进制，在通常的使用用例中都将是10。
+
+我们将生成的数字存储在名为content的变量中，然后将该变量传给text函数来在屏幕中间进行显示。
+
+我们将需要对显示在屏幕上的数字添加大量的自定义行为，因此会创建一个JavaScript对象来表示它。这样，我们创建的操作数字的函数（如转换操作、颜色配置等）都可以在对象下进行分组，这样有助于程序的组织。我们将称这一新对象为GuessItem。我非常清楚这是一个很糟糕的名称，但他们都说计算机世界有两大难题：缓存失效和命名，还有就是单字节溢出（off-by-one）问题。
+
+如果你在我们创建JavaScript对象包裹p5.js的text函数之后再来看我们的代码，可能会觉得我们毫无原因地增加了代码的复杂性，因为代码几乎变得两倍大。但在对象下包含text绘制功能将会在后续中大大地帮助我们组织我们的代码。参见示例13-2。
+
+**示例13-2.** 文本绘制功能
+
+```
+var guessItem;
+
+function setup() {
+	createCanvas(800, 300);
+}
+
+function draw() {
+	if(frameCount === 1 || frameCount % 100 === 0){
+		background(220);
+		guessItem = new GuessItem(width/2, height/2, 1);
+	} 
+
+	guessItem.render();
+}
+
+function GuessItem(x, y, scl){
+	this.x = x;
+	this.y = y;
+	this.scale = scl;
+	this.content = getContent();
+
+	function getContent(){
+		// 生成0到9之间的随机整数
+		return parseInt(random(10), 10);
+	}
+
+	this.render = function(){
+		push();
+		textAlign(CENTER, CENTER);
+		translate(this.x, this.y);
+		scale(this.scale);
+		text(this.content, 0, 0);
+		pop();
+	}
+}
+```
+
+我们首先来看看GuessItem这个对象。GuessItem是一个创建对象的构造函数，需要三个参数：x 和y坐标位置以及在屏幕上绘制的形状的缩放。其中还包含两个方法。第一个是getContent，生成0到10之间的随机数，存储在名为content的属性中。另一个方法是render，它在屏幕上显示GuessItem对象实例的content属性。
+
+render方法中的每一个操作都在push和pop函数调用之间。这让我们可以在该对象中这一方法内放置设置和转换相关的状态变化。这里，我们使用了translate和scale转换函数来修改文本对象的位置和大小。我们在前面没有学习过scale函数，但它是一个类似translate和rotate的转换函数。如其名称所表达的，它控制绘图区的缩放，它与其它转换函数的运行原理相似，所以最好也将它放在push和pop函数之间。
+
+我们可以使用textSize函数来调整大小，但我一般觉得使用转换函数会更为直观。
+
+在示例13-3中，我们使用这个GuessItem构造函数来创建一个在屏幕上绘制的对象。在第10行上通过一些参数来实例化GuessItem对象，并将其存储在一个名为guessItem的变量中。
+
+**示例13-3.** 创建GuessItem的实例
+
+```
+guessItem = new GuessItem(width/2, height/2, 1);
+```
+
+GuessItem所显示的数字也取决于这一实例化。在屏幕上绘制这一对象发生在代码第13行，使用其中的render方法（示例13-4）。
+
+**示例13-4.** 使用render方法
+
+```
+guessItem.render();
+```
+
+在示例13-5中，我们来让文本在其生命周期内增长尺寸以让游戏增加些动态效果。
+
+**示例13-5.** 让文本尺寸变大
+
+```
+var guessItem;
+
+function setup() {
+	createCanvas(800, 300);
+}
+
+function draw() {
+	background(220);
+	if(frameCount === 1 || frameCount % 100 === 0){
+		guessItem = new GuessItem(width/2, height/2, 1);
+	} 
+
+	guessItem.render();
+}
+
+function GuessItem(x, y, scl){
+	this.x = x;
+	this.y = y;
+	this.scale = scl;
+	this.scaleIncrement = 1;
+	this.content = getContent();
+
+	function getContent(){
+		// 生成0到9之间的随机整数
+		return parseInt(random(10), 10);
+	}
+
+	this.render = function(){
+		push();
+		textAlign(CENTER, CENTER);
+		translate(this.x, this.y);
+		scale(this.scale);
+		text(this.content, 0, 0);
+		// 通过每次渲染的递增值来增加 scale 的大小
+		this.scale = this.scale + this.scaleIncrement;
+		pop();
+	}
+}
+```
+
+![](https://i.taixr.com/452b311b8d734450b4cb7ec3deccba59.gif)
+
+我们添加了一种在调用 render 函数时递增scale函数的方式（示例13-6）。
+
+示例13-6. 递增scale函数
+
+```
+this.scale = this.scale + this.scaleIncrement;
+```
+
+我们还在GuessItem构造函数内添加了一个名为scaleIncrement的变量，用于控制放大的速度。试着修改它的值来改变动画的节奏。比如，我们可以增加它的值来让游戏变得更难。
+
+在示例13-7中，我们会修改我们脚本的参数内容来控制数字显示的方式和频率。
+
+**示例13-7.** 控制数字的频率
+
+```
+var guessItem;
+// 控制新随机数生成的频率
+var interval = 100;
+
+function setup() {
+	createCanvas(800, 300);
+}
+
+function draw() {
+	background(220);
+	if(frameCount === 1 || frameCount % interval === 0){
+		guessItem = new GuessItem(width/2, height/2, 1);
+	} 
+
+	guessItem.render();
+}
+
+function GuessItem(x, y, scl){
+	this.x = x;
+	this.y = y;
+	this.scale = scl;
+	this.scaleIncrement =0.5;
+	this.content = getContent();
+	this.alpha = 255;
+	this.alphaDecrement = 3;
+
+	function getContent(){
+		// 生成0到9之间的随机整数
+		return parseInt(random(10), 10);
+	}
+
+	this.render = function(){
+		push();
+		fill(0, this.alpha);
+		textAlign(CENTER, CENTER);
+		translate(this.x, this.y);
+		scale(this.scale);
+		text(this.content, 0, 0);
+		// 通过每次渲染的递增值来增加 scale 的大小
+		this.scale = this.scale + this.scaleIncrement;
+		// 通过递减值在每次渲染时减小 alpha 值
+		this.alpha = this.alpha - this.alphaDecrement;
+		pop();
+	}
+}
+```
+
+![](https://i.taixr.com/7ebaad7a2dd345b98440c1b961c2c442.gif)
+
+这里我们对代码做了一些调整。在render方法中添加了一个fill函数，现在动态地设置了显示数字的alpha值来增加每一帧的透明度。我觉得这为游戏增加了动态效果。将该值设置小会让数字更难查看。我们还使用名为interval的变量将GuessItem的创建频率设置为了参数，这样就可以通过修改该变量的值来让游戏变得更难或更容易。
+
+顺便问下你能否猜猜我们为什么将生成数字的函数命名为getContent？那是因为在完成这个小游戏时，把游戏中在屏幕显示的数字修改为单词会非常容易。让函数名称保持通用有利用未来对游戏进行扩展。
+
+到这里，我们只完成了项目清单中的两项，即通过给定的时间间隔来在屏幕上显示数字，以及对数字添加动画来让游戏动态性更强。下一部分中，我们将处理玩家的交互。
+
+## 用户交互
+
+我们还有一项艰巨的任务是获取用户的输入并与屏幕上的数字进行对比。下面就来实现它（示例13-8）。
+
+**示例13-8.** 获取并比对用户输入
+
+```
+var guessItem = null;
+// 控制新随机数生成的频率
+var interval = 100;
+var solution = null;
+
+function setup() {
+	createCanvas(800, 300);
+}
+
+function draw() {
+	background(220);
+	if(frameCount === 1 || frameCount % interval === 0){
+		solution = null;
+		guessItem = new GuessItem(width/2, height/2, 1);
+	} 
+
+	if(guessItem){
+		guessItem.render();
+	}
+	
+	if(solution === true){
+		background(255);
+	}else if(solution === false){
+		background(0);
+	}
+}
+
+function keyPressed(){
+	if(guessItem !== null){
+		// 检查按下的键是否与显示的值相匹配
+		// 如果匹配设置全局变量solution为对应的值
+		console.log('you pressed: ', key);
+		solution = guessItem.solve(key);
+		console.log(solution);
+		guessItem = null;
+	}else{
+		console.log('nothing to be solved');
+	}
+}
+
+function GuessItem(x, y, scl){
+	this.x = x;
+	this.y = y;
+	this.scale = scl;
+	this.scaleIncrement =0.5;
+	this.content = getContent();
+	this.alpha = 255;
+	this.alphaDecrement = 3;
+	this.solved = null;
+
+	function getContent(){
+		// 生成0到9之间的随机整数
+		return parseInt(random(10), 10);
+	}
+
+	this.solve = function(input){
+		// 检查给定的输入是否与内容相等
+		// 设置 solved 为对应的值
+		var solved;
+		if(input === this.content){
+			solved = true;
+		}else{
+			solved = false;
+		}
+		this.solved = solved;
+		return solved;
+	}
+
+	this.render = function(){
+		push();
+		if(this.solved === false){
+			return;
+		}
+		fill(0, this.alpha);
+		textAlign(CENTER, CENTER);
+		translate(this.x, this.y);
+		scale(this.scale);
+		text(this.content, 0, 0);
+		// 通过每次渲染的递增值来增加 scale 的大小
+		this.scale = this.scale + this.scaleIncrement;
+		// 通过递减值在每次渲染时减小 alpha 值
+		this.alpha = this.alpha - this.alphaDecrement;
+		pop();
+	}
+}
+```
+
+我们更新了代码中一些地方。要实现我们的任务，我们实现在GuessItem对象中实现了一个名为solve的新方法。solve方法接收用户输入并根据其与GuessItem中的变量content是否匹配来返回true或false。最终我们将结果保存在全局变量solution中（示例13-9）。
+
+**示例13-9.** GuessItem中的solve方法
+
+```
+this.solve = function(input){
+	// 检查给定的输入是否与内容相等
+	// 设置 solved 为对应的值
+	var solved;
+	if(input === this.content){
+		solved = true;
+	}else{
+		solved = false;
+	}
+	this.solved = solved;
+	return solved;
+}
+```
+
+要能够获取用户输入，我们创建了一个p5.js事件函数keyPressed，在每次用户按下键盘时都会被调用。在这个keyPressed函数内，我们调用了guessItem对象的solve方法来查看按下的按键与guessItem中的内容是否匹配。如果匹配，变量solution的值为true，否则为false。
+
+**示例13-10.** 处理按下的键
+
+```
+function keyPressed(){
+	if(guessItem !== null){
+		// 检查按下的键是否与显示的值相匹配
+		// 如果匹配设置全局变量solution为对应的值
+		console.log('you pressed: ', key);
+		solution = guessItem.solve(key);
+		console.log(solution);
+		guessItem = null;
+	}else{
+		console.log('nothing to be solved');
+	}
+}
+```
+
+我们仅在GuessItem存在时地会读取玩家的按键输入。这是因为我们在在玩家进行猜测时为变量guessItem赋值null。这么做可以删除掉当前的guessItem对象。它允许我们避免玩家对同一个数字做出多次猜测。因为变量guessItem现在的值可以为null，这表在用户在深度猜值时游戏中可能没有供猜的项目，我们对render方法的调用就有可能失败。要避免这一情况发生，我们把render的调用放在了条件语句中。此外我们在keyPressed函数中添加了几个console.log函数来通过终端中的消息来了解当前所发生的情况。
+
+作为一种测试手段，我们添加了条件语句来改变背景的颜色，使用变量solution来在玩家猜错时显示为黑色，而答对时显示白色。
+
+说了这么多，这段代码还不能正常的动作。即使我们答对了屏幕还是显示为黑色。能猜到是什么原因吗？
+
+原来是因为keyPressed函数捕获的按键是字符串，而GuessItem对象中生成的内容是数字。使用三个等号符===，我们比较两个值是否严格相等，这里并不严格相等。这是因为数字和字符串是永不相等的。因此我们函数返回false。要解决这一问题，我们要使用JavaScript的String函数将数字转化成字符串（示例13-11）。
+
+**示例13-11.** 将随机整数转化为字符串
+
+```
+function getContent(){
+	return String(parseInt(random(10), 10));
+}
+```
+
+## 保存用户得分
+
+要向用户反馈他们在游戏中的表现，我们要开始保存他们的成绩。我们将使用保存的数据来让答题数或错误数达到某一数量时停止游戏（示例13-12）。
+
+**示例13-12.** 保存得分
+
+```
+var guessItem = null;
+// 控制新随机数生成的频率
+var interval = 100;
+// 存储解析值的数组
+var results = [];
+var solution = null;
+
+function setup() {
+	createCanvas(800, 300);
+}
+
+function draw() {
+	background(220);
+	if(frameCount === 1 || frameCount % interval === 0){
+		solution = null;
+		guessItem = new GuessItem(width/2, height/2, 1);
+	} 
+
+	if(guessItem){
+		guessItem.render();
+	}
+	
+	if(solution === true){
+		background(255);
+	}else if(solution === false){
+		background(0);
+	}
+}
+
+function keyPressed(){
+	if(guessItem !== null){
+		// 检查按下的键是否与显示的值相匹配
+		// 如果匹配设置全局变量solution为对应的值
+		console.log('you pressed: ', key);
+		solution = guessItem.solve(key);
+		console.log(solution);
+		if(solution){
+			results.push(true);
+		}else{
+			results.push(false);
+		}
+		guessItem = null;
+	}else{
+		console.log('nothing to be solved');
+	}
+}
+
+function GuessItem(x, y, scl){
+	this.x = x;
+	this.y = y;
+	this.scale = scl;
+	this.scaleIncrement =0.5;
+	this.content = getContent();
+	this.alpha = 255;
+	this.alphaDecrement = 3;
+	this.solved = null;
+
+	function getContent(){
+		// 生成0到9之间的随机整数
+		return String(parseInt(random(10), 10));
+	}
+
+	this.solve = function(input){
+		// 检查给定的输入是否与内容相等
+		// 设置 solved 为对应的值
+		var solved;
+		if(input === this.content){
+			solved = true;
+		}else{
+			solved = false;
+		}
+		this.solved = solved;
+		return solved;
+	}
+
+	this.render = function(){
+		push();
+		if(this.solved === false){
+			return;
+		}
+		fill(0, this.alpha);
+		textAlign(CENTER, CENTER);
+		translate(this.x, this.y);
+		scale(this.scale);
+		text(this.content, 0, 0);
+		// 通过每次渲染的递增值来增加 scale 的大小
+		this.scale = this.scale + this.scaleIncrement;
+		// 通过递减值在每次渲染时减小 alpha 值
+		this.alpha = this.alpha - this.alphaDecrement;
+		pop();
+	}
+}
+```
+
+在示例13-13中，我们创建了一个results数据来存储玩家的得分。每当玩家答对时，我们向数组中推入一个true值，而每当玩家答错时，则推入一个false值。
+
+**示例13-13.** 创建一个数组results
+
+```
+if(solution){
+	results.push(true);
+}else{
+	results.push(false);
+}
+```
+
+我们还应创建函数来获取数组results的值并进行运行。为此，我们将创建一个名为getGameScore的函数（示例13-14）。它将获取数组results并运行它来查看当前用户的得分。
+
+**示例13-14.** 创建getGameScore函数
+
+```
+var guessItem = null;
+// 控制新随机数生成的频率
+var interval = 100;
+// 存储解析值的数组
+var results = [];
+var solution = null;
+
+function setup() {
+	createCanvas(800, 300);
+}
+
+function draw() {
+	// 如果有3次错误或10次答题则终止游戏
+	var gameScore = getGameScore(results);
+	if(gameScore.loss === 3 || gameScore.total === 10){
+		return;
+	}
+	background(220);
+	if(frameCount === 1 || frameCount % interval === 0){
+		solution = null;
+		guessItem = new GuessItem(width/2, height/2, 1);
+	} 
+
+	if(guessItem){
+		guessItem.render();
+	}
+	
+	if(solution === true){
+		background(255);
+	}else if(solution === false){
+		background(0);
+	}
+}
+
+function getGameScore(score){
+	// 给定一个数组score，计算答对和答错的次数
+	var wins = 0;
+	var losses = 0;
+	var total = score.length;
+
+	for(var i = 0; i < total; i++){
+		var item = score[i];
+		if(item == true){
+			wins = wins + 1;
+		}else{
+			losses = losses + 1;
+		}
+	}
+
+	return {win: wins, loss: losses, total: total}
+}
+
+function keyPressed(){
+	if(guessItem !== null){
+		// 检查按下的键是否与显示的值相匹配
+		// 如果匹配设置全局变量solution为对应的值
+		console.log('you pressed: ', key);
+		solution = guessItem.solve(key);
+		console.log(solution);
+		if(solution){
+			results.push(true);
+		}else{
+			results.push(false);
+		}
+		guessItem = null;
+	}else{
+		console.log('nothing to be solved');
+	}
+}
+
+function GuessItem(x, y, scl){
+	this.x = x;
+	this.y = y;
+	this.scale = scl;
+	this.scaleIncrement =0.5;
+	this.content = getContent();
+	this.alpha = 255;
+	this.alphaDecrement = 3;
+	this.solved = null;
+
+	function getContent(){
+		// 生成0到9之间的随机整数
+		return String(parseInt(random(10), 10));
+	}
+
+	this.solve = function(input){
+		// 检查给定的输入是否与内容相等
+		// 设置 solved 为对应的值
+		var solved;
+		if(input === this.content){
+			solved = true;
+		}else{
+			solved = false;
+		}
+		this.solved = solved;
+		return solved;
+	}
+
+	this.render = function(){
+		push();
+		if(this.solved === false){
+			return;
+		}
+		fill(0, this.alpha);
+		textAlign(CENTER, CENTER);
+		translate(this.x, this.y);
+		scale(this.scale);
+		text(this.content, 0, 0);
+		// 通过每次渲染的递增值来增加 scale 的大小
+		this.scale = this.scale + this.scaleIncrement;
+		// 通过递减值在每次渲染时减小 alpha 值
+		this.alpha = this.alpha - this.alphaDecrement;
+		pop();
+	}
+}
+```
+
+我的脚本的大小和复杂性都在不断增大。此处示例13-15中我们新增的函数为getGameScore。这接收变量score并遍历该变量来累加获胜和失败的次数，以及答题的总次数。
+
+**示例13-15.** 使用getGameScore计算游戏得分
+
+```
+function getGameScore(score){
+	// 给定一个数组score，计算答对和答错的次数
+	var wins = 0;
+	var losses = 0;
+	var total = score.length;
+
+	for(var i = 0; i < total; i++){
+		var item = score[i];
+		if(item == true){
+			wins = wins + 1;
+		}else{
+			losses = losses + 1;
+		}
+	}
+
+	return {win: wins, loss: losses, total: total}
+}
+```
+
+我们在draw函数的开头新增了一个条件语句来检查getGameScore函数的结果。如果答错3次或总答题数达到10次，条件语句执行一条return语句（示例13-16）。
+
+**示例13-16.** 根据条件终止游戏
+
+```
+var gameScore = getGameScore(results);
+if(gameScore.loss === 3 || gameScore.total === 10){
+	return;
+}
+```
+
+如示例13-17中所见，return语句之后的任意一行语句都不会执行，因为当前循环会终止并将开启一个新的循环，在玩家的分数保持不变的情况下新循环也会终止。
+
+**示例13-17.** 使用return语句来终止draw循环
+
+```
+if(gameScore.loss === 3 || gameScore.total === 10){
+	return;
+}
+```
+
+这时我们需要一个重新启动游戏的机制。如例13-18所示，首先我们要创建一个页面在游戏终止时显示玩家的得分，以及一个弹出窗口让用户按下ENTER键来重启游戏（图13-1）。其次，在游戏结束后玩家按下 ENTER 键时我们要重新启动游戏。
+
+**示例13-18.** 重启游戏
+
+```
+var guessItem = null;
+// 控制新随机数生成的频率
+var interval = 100;
+// 存储解析值的数组
+var results = [];
+var solution = null;
+// 存储游戏是否已结束
+var gameOver = false;
+
+function setup() {
+	createCanvas(800, 300);
+}
+
+function draw() {
+	// 如果有3次错误或10次答题则终止游戏
+	var gameScore = getGameScore(results);
+	if(gameScore.loss === 3 || gameScore.total === 10){
+		gameOver = true;
+		displayGameOver(gameScore);
+		return;
+	}
+	background(220);
+	if(frameCount === 1 || frameCount % interval === 0){
+		solution = null;
+		guessItem = new GuessItem(width/2, height/2, 1);
+	} 
+
+	if(guessItem){
+		guessItem.render();
+	}
+	
+	if(solution === true){
+		background(255);
+	}else if(solution === false){
+		background(0);
+	}
+}
+
+function displayGameOver(score){
+	// 创建游戏结束界面
+	push();
+	background(255);
+	textSize(24);
+	textAlign(CENTER, CENTER);
+	translate(width/2, height/2);
+	fill(237, 34, 93);
+	text('游戏结束!', 0, 0);
+	translate(0, 36);
+	fill(0);
+	// 在字符串中添加空格让文本显示更易读-针对英文版
+	// text('You have ' + score.win + ' correct guesses', 0, 0);
+	text('您答对了' + score.win + '次', 0, 0 );
+	translate(0, 100);
+	textSize(16);
+	var alternatingValue = map(sin(frameCount / 10), -1, 1, 0, 255);
+	fill(234, 34, 93, alternatingValue);
+	text("按ENTER键", 0, 0);
+	pop();
+}
+
+function getGameScore(score){
+	// 给定一个数组score，计算答对和答错的次数
+	var wins = 0;
+	var losses = 0;
+	var total = score.length;
+
+	for(var i = 0; i < total; i++){
+		var item = score[i];
+		if(item == true){
+			wins = wins + 1;
+		}else{
+			losses = losses + 1;
+		}
+	}
+
+	return {win: wins, loss: losses, total: total}
+}
+
+function restartTheGame(){
+	// 设置游戏状态为开始
+	results = [];
+	solution = null;
+	gameOver = false;
+}
+
+function keyPressed(){
+	//如果游戏结束，在按下ENTER键时重启游戏
+	if(gameOver === true){
+		if(keyCode === ENTER){
+			console.log('重新启动游戏');
+			restartTheGame();
+			return;
+		}
+	}
+	
+	if(guessItem !== null){
+		// 检查按下的键是否与显示的值相匹配
+		// 如果匹配设置全局变量solution为对应的值
+		console.log('you pressed: ', key);
+		solution = guessItem.solve(key);
+		console.log(solution);
+		if(solution){
+			results.push(true);
+		}else{
+			results.push(false);
+		}
+		guessItem = null;
+	}else{
+		console.log('nothing to be solved');
+	}
+}
+
+function GuessItem(x, y, scl){
+	this.x = x;
+	this.y = y;
+	this.scale = scl;
+	this.scaleIncrement =0.5;
+	this.content = getContent();
+	this.alpha = 255;
+	this.alphaDecrement = 3;
+	this.solved = null;
+
+	function getContent(){
+		// 生成0到9之间的随机整数
+		return String(parseInt(random(10), 10));
+	}
+
+	this.solve = function(input){
+		// 检查给定的输入是否与内容相等
+		// 设置 solved 为对应的值
+		var solved;
+		if(input === this.content){
+			solved = true;
+		}else{
+			solved = false;
+		}
+		this.solved = solved;
+		return solved;
+	}
+
+	this.render = function(){
+		push();
+		if(this.solved === false){
+			return;
+		}
+		fill(0, this.alpha);
+		textAlign(CENTER, CENTER);
+		translate(this.x, this.y);
+		scale(this.scale);
+		text(this.content, 0, 0);
+		// 通过每次渲染的递增值来增加 scale 的大小
+		this.scale = this.scale + this.scaleIncrement;
+		// 通过递减值在每次渲染时减小 alpha 值
+		this.alpha = this.alpha - this.alphaDecrement;
+		pop();
+	}
+}
+```
+
+[![图13-1. 示例13-18的输出](https://i.taixr.com/2019021003492657.jpeg)](http://alanhou.org/homepage/wp-content/uploads/2019/02/2019021003492657.jpg)
+
+**图13-1.** 示例13-18的输出
+
+![](https://i.taixr.com/d67a24945b0444c098e7078eabf340a9.gif)
+
+首先我们来看看displayGameOver函数都做了些什么（示例13-19）。这里有一些此前我们没学到的内容。
+
+**示例13-19.** DisplayGameOver函数
+
+```
+function displayGameOver(score){
+	// 创建游戏结束界面
+	push();
+	background(255);
+	textSize(24);
+	textAlign(CENTER, CENTER);
+	translate(width/2, height/2);
+	fill(237, 34, 93);
+	text('游戏结束!', 0, 0);
+	translate(0, 36);
+	fill(0);
+	// 在字符串中添加空格让文本显示更易读-针对英文版
+	// text('You have ' + score.win + ' correct guesses', 0, 0);
+	text('您答对了' + score.win + '次', 0, 0 );
+	translate(0, 100);
+	textSize(16);
+	var alternatingValue = map(sin(frameCount / 10), -1, 1, 0, 255);
+	fill(234, 34, 93, alternatingValue);
+	text("按ENTER键", 0, 0);
+	pop();
+}
+```
+
+第一个应注意的点是translate函数的调用产生了累加。如果我们在width/2, height/2之后执行一个(0, 100)的偏移，结果将偏移width/2, height/2 + 100。
+
+另一点是在代码使用了新的p5.js函数sin和map，用来创建闪烁文字的效果。sin函数计算角度的正弦值。给定按序列的付下，正弦值的结果将在-1到1之间不断变化。但在我们的用例中数值-1到1几乎没什么用。在fill函数中设置alpha值在0到255之间变化就会非常的有用了。这时我们使用了map函数（示例13-20）。map函数将给定的范围（第2和第3个参数）的值与新的给定范围（第4和第5个参数）进行映射。
+
+**示例13-20.** 使用map函数
+
+```
+var alternatingValue = map(sin(frameCount/10), -1, 1, 0, 255);
+```
+
+我们将sin函数-1和1之间的结果值与0到255进行映射。
+
+我们可以使用一个新的函数来向玩家显示消息来替换简单地执行return语句。下面我们实现的是在游戏结束时重启的一种方式。首先，我们需要一种响应ENTER键的方式。然后我们需要重新初始化游戏相关的变量来让人感觉到游戏是重新开始了。
+
+示例13-21为对ENTER键响应的keyPressed函数部分的代码。
+
+**示例13-21.** 对ENTER键响应
+
+```
+if(gameOver === true){
+	if(keyCode === ENTER){
+		console.log('重新启动游戏');
+		restartTheGame();
+		return;
+	}
+}
+```
+
+我们使用了变量keyCode与ENTER来对ENTER按键进行响应。
+
+restartTheGame函数的内容非常简单（示例13-22）。它重新初始化了几个全局变量，比如用户得分，来让游戏重新开始。
+
+**示例13-22.** restartTheGame函数
+
+```
+function restartTheGame(){
+	// 设置游戏状态为开始
+	results = [];
+	solution = null;
+	gameOver = false;
+}
+```
+
+这就是全部内容了。我们还可以再继续通过改变游戏机制和增强游戏视图效果修改代码来让游戏的体验更好。但我们已经搭建了游戏的基础框架，根据特定的需求可对其做进一步的开发。
+
+## 最终代码
+
+以下是我们最终代码（示例13-23）。我决定对这个版本再做一些更新。我决定用单词来替代数字的显示。我发现这样在视觉上会更好看，并且从游戏的视角看也更具挑战性，因为这让我们解析所看到的内容更为复杂。我还在GuessItem中新增了一个名为drawEllipse的方法，在单词的周围画圆来让游戏视图效果更好。最后，我对游戏参数做了一些修改，来让时机更合适并且在玩家输入正确或错误的数字时显示消息。图13-2显示了最终游戏代码的界面。
+
+**示例13-23.** 最终代码
+
+```
+var guessItem = null;
+// 控制新随机数生成的频率
+var interval = 60;
+// 存储解析值的数组
+var results = [];
+var solution = null;
+// 存储游戏是否已结束
+var gameOver = false;
+
+function setup() {
+	createCanvas(800, 300);
+}
+
+function draw() {
+	// 如果有3次错误或10次答题则终止游戏
+	var gameScore = getGameScore(results);
+	if(gameScore.loss === 3 || gameScore.total === 10){
+		gameOver = true;
+		displayGameOver(gameScore);
+		return;
+	}
+	background(0); // 黑色背景
+	if(frameCount === 1 || frameCount % interval === 0){
+		solution = null;
+		guessItem = new GuessItem(width/2, height/2, 1);
+	} 
+
+	if(guessItem){
+		guessItem.render();
+	}
+	
+	if(solution === true || solution === false){
+		// 不以单调的颜色在屏幕上显示文本
+		solutionMessage(gameScore.total, solution);
+	}
+}
+
+function solutionMessage(seed, solution){
+	// 根据solution的值为 true 或 false 来显示随机消息
+	var trueMessages = [
+		'GOOD JOB!',
+		'DOING GREAT!',
+		'OMG!',
+		'SUCH WIN!',
+		'I APPRECIATE YOU',
+		'IMPRESSIVE'
+	];
+
+	var falseMessages = [
+		'OH NO!',
+		'BETTER LUCK NEXT TIME!',
+		'PFTTTT',
+		':('
+	];
+
+	var messages;
+
+	push();
+	textAlign(CENTER, CENTER);
+	fill(237, 34, 93);
+	textSize(36);
+	randomSeed(seed * 10000);
+
+	if(solution === true){
+		background(255);
+		messages = trueMessages;
+	}else if(solution === false){
+		background(0);
+		messages = falseMessages;
+	}
+
+	text(messages[parseInt(random(messages.length), 10)],
+		width/2, height/2);
+	pop();
+}
+
+function displayGameOver(score){
+	// 创建游戏结束界面
+	push();
+	background(255);
+	textSize(24);
+	textAlign(CENTER, CENTER);
+	translate(width/2, height/2);
+	fill(237, 34, 93);
+	text('游戏结束!', 0, 0);
+	translate(0, 36);
+	fill(0);
+	// 在字符串中添加空格让文本显示更易读-针对英文版
+	// text('You have ' + score.win + ' correct guesses', 0, 0);
+	text('您答对了' + score.win + '次', 0, 0 );
+	translate(0, 100);
+	textSize(16);
+	var alternatingValue = map(sin(frameCount / 10), -1, 1, 0, 255);
+	fill(234, 34, 93, alternatingValue);
+	text("按ENTER键", 0, 0);
+	pop();
+}
+
+function getGameScore(score){
+	// 给定一个数组score，计算答对和答错的次数
+	var wins = 0;
+	var losses = 0;
+	var total = score.length;
+
+	for(var i = 0; i < total; i++){
+		var item = score[i];
+		if(item == true){
+			wins = wins + 1;
+		}else{
+			losses = losses + 1;
+		}
+	}
+
+	return {win: wins, loss: losses, total: total}
+}
+
+function restartTheGame(){
+	// 设置游戏状态为开始
+	results = [];
+	solution = null;
+	gameOver = false;
+}
+
+function keyPressed(){
+	//如果游戏结束，在按下ENTER键时重启游戏
+	if(gameOver === true){
+		if(keyCode === ENTER){
+			console.log('重新启动游戏');
+			restartTheGame();
+			return;
+		}
+	}
+
+	if(guessItem !== null){
+		// 检查按下的键是否与显示的值相匹配
+		// 如果匹配设置全局变量solution为对应的值
+		console.log('you pressed: ', key);
+		solution = guessItem.solve(key);
+		console.log(solution);
+		if(solution){
+			results.push(true);
+		}else{
+			results.push(false);
+		}
+		guessItem = null;
+	}else{
+		console.log('nothing to be solved');
+	}
+}
+
+function GuessItem(x, y, scl){
+	this.x = x;
+	this.y = y;
+	this.scale = scl;
+	this.scaleIncrement =0.25;
+	this.clr = 255;
+	this.content = getContent();
+	this.alpha = 255;
+	this.alphaDecrement = 6;
+	this.solved = null;
+	this.contentMap = {
+		'1': 'one',
+ 		'2': 'two',
+ 		'3': 'three',
+ 		'4': 'four',
+		'5': 'five',
+		'6': 'six',
+		'7': 'seven',
+		'8': 'eight',
+		'9': 'nine',
+		'0': 'zero'
+	};
+	this.colors = [
+		[63, 184, 175],
+		[127, 199, 175],
+		[218, 216, 167],
+		[255, 158, 157],
+		[255, 61, 127],
+		[55, 191, 211],
+		[159, 223, 82],
+		[234, 209, 43],
+		[250, 69, 8],
+		[194, 13, 0]
+	];
+
+	function getContent(){
+		// 生成0到9之间的随机整数
+		return String(parseInt(random(10), 10));
+	}
+
+	this.solve = function(input){
+		// 检查给定的输入是否与内容相等
+		// 设置 solved 为对应的值
+		var solved;
+		if(input === this.content){
+			solved = true;
+		}else{
+			solved = false;
+		}
+		this.solved = solved;
+		return solved;
+	}
+
+	this.drawEllipse = function(size, strkWeight, speedMultiplier, seed){
+		// 使用随机颜色在屏幕上画动态的圆
+		push();
+		randomSeed(seed);
+		translate(this.x, this.y);
+		var ellipseSize = this.scale * speedMultiplier;
+		scale(ellipseSize);
+		var clr = this.colors[parseInt(random(this.colors.length), 10)];
+		stroke(clr);
+		noFill();
+		strokeWeight(strkWeight);
+		ellipse(0, 0, size, size);
+		pop();
+	}
+
+	this.render = function(){
+		push();
+		this.drawEllipse(100, 15, 2, 1 * this.content * 1000);
+		this.drawEllipse(60, 7, 2, 1 * this.content * 2000);
+		this.drawEllipse(35, 3, 1.2, 1 * this.content * 3000);
+		pop();
+
+		push();
+		fill(this.clr, this.alpha);
+		textAlign(CENTER, CENTER);
+		translate(this.x, this.y);
+		scale(this.scale);
+		// 显示数字对应的单词
+		text(this.contentMap[this.content], 0, 0);
+		// 通过每次渲染的递增值来增加 scale 的大小
+		this.scale = this.scale + this.scaleIncrement;
+		// 通过递减值在每次渲染时减小 alpha 值
+		this.alpha = this.alpha - this.alphaDecrement;
+		pop();
+	}
+}
+```
+
+![](https://i.taixr.com/202d98ef2e5741d488e9aa31a1944ccd.gif)
+
+**图13-2.** 最终游戏代码的界面
+
+代码中最大的修改是solutionMessage 函数，所以我们来一起了解下其中的细节（示例13-24）。此前我们仅仅是使用了根据变量solution来使用了if-else语句来决定屏幕上显示 的内容。如果solution为true，我们显示了白色背景，而solution为false时，显示黑色背景。
+
+现在当solution为两者之一时（true或false），我们将其传入了一个名为solutionMessage的函数，它使用gameScore.total作为random函数的种子来选择随机消息。
+
+**示例13-24.** 在屏幕上显示消息
+
+```
+if(solution === true || solution === false){
+	solutionMessage(gameScore.total, solution);
+}
+```
+
+在示例13-25中可以看出，在solutionMessage函数内有两个数组，包含根据solution的值显示的一组消息值。
+
+**示例13-25.** 根据条件选择消息
+
+```
+if(solution === true){
+	background(255);
+	messages = trueMessages;
+}else if(solution === false){
+	background(0);
+	messages = falseMessages;
+}
+```
+
+在示例13-26中，我们通过将返回的随机函数值转化为整数从这两个数组中选择了一个随机值。
+
+**示例13-26.** 选择随机消息
+
+```
+text(messages[parseInt(random(messages.length), 10)], width/2, height/2);
+```
+
+## 总结
+
+这一定是一个有挑战性的案例，我们把所学习的所有知识都放入它进行了测试。
+
+使用p5.js就可以创建一个有网络上运行并供数百万人玩的游戏一定很神奇。而且并不是很困难，整个程序仅仅200多行代码。一定还要改善的空间，根据玩家的成绩在动态分配游戏难度，增加视觉效果，根据答对数字所消耗时间来打分的动态打分系统。游戏可转化为单词来代替数字 。它可以显示图片来要求你输入名称或计算所需的答案。可能性无穷无尽。
+
+说了这些，如果需要更高级的项目p5.js可能不是创建游戏的最好平台。一款合适的游戏库应自带一些功能，如资源加载系统、精灵的支持、冲撞监测、物理引擎、粒子系统...在构造高级游戏时经常会用到。当然这并不是说你不能使用p5.js来创建游戏。我们刚刚还证明了可以办到。只是说其它库对于开发游戏更为专业，而p5.js更适于创建网页上的交互、动画体验。但通过学习p5.js，你不仅可以学习如何使用JavaScript以及它所擅长的所有功能，还能理解JavaScript生态系统中的其它第三方库如何运行。
