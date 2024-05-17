@@ -1,0 +1,365 @@
+---
+sidebar_position: 7
+---
+
+# 第七章 循环
+
+重复是计算机所擅长的事情之一。想象一下使用不同的参数在屏幕上画一千个图形。以当前的编程知识这将耗费我们大量的时间。对于这种以相同或带有变动的方式重复代码的情况，我们可以使用称之为循环的编程结构。循环让我们可以对一个代码块反复的执行。
+
+我们已有熟悉了p5.js中的循环概念。想一下，draw函数就是一个反复执行的循环，直到p5.js程序退出为止。在本章中，我们将学习如何创建我们自己的这类循环。
+
+## for 循环
+
+JavaScript中有几种不同的循环结构，但for循环是其中最为常用的。它让我们能以指定次数对运算进行重复。for循环有四个部分组成，示例7-1演示了如何构建一个for循环。
+
+**示例7-1.** for循环的示例
+
+```
+for (var i = 0; i < 10; i = i + 1) {
+ 	//do something
+}
+```
+
+在第一部分中，我们初始化了一个变量，用于记录循环执行的次数，我们称之为记数变量。
+
+```
+var i = 0;
+```
+
+按照惯例，循环中将使用简短的变量名，如i或j，尤其是在变量仅用于控制循环流程时。但请随意使用其它变量，只要在你的用例中有具体含义。
+
+第二部分中，我们定义每次循环开始时运行的测试条件。本例中，我们给检查计算变量是否小于数字10.
+
+```
+i < 10;
+```
+
+第三部分中，我们定义一种在循环结束时运行的更新计算变量的方式。本例中，我们获取当前变量i的值并为值加1。
+
+```
+i = i + 1;
+```
+
+最后在大括号内我们编写需重复的代码。一旦计算变量无法满足测试条件时，循环终止，程序返回正常运行。
+
+如果一直能满足测试条件，就会形成无限循环，除非通过外部方式终止程序，否则程序会一直执行、永不退出。p5.js中的 draw函数就是一个无限循环，直到关闭浏览器窗口会一直在屏幕上绘画。
+
+虽然无限循环是一个有效用例，循环更常用的是执行有限次数的运算。我们来使用for循环来在屏幕上画给定数量的圆形（示例7-2和图7-1）。
+
+**示例7-2.** 使用for循环画圆
+
+```
+function setup() {
+	createCanvas(800, 300);
+}
+
+function draw() {
+	background(1, 75, 100);
+
+	// 圆形属性
+	fill(237, 34, 93);
+	noStroke();
+
+	for(var i=0; i<10; i=i+1){
+		ellipse(0, 0, 50, 50);
+	}
+}
+```
+
+[![图7-1. 示例7-2的输出](https://i.taixr.com/2019020302481522.jpeg)](http://alanhou.org/homepage/wp-content/uploads/2019/02/2019020302481522.jpg)
+
+**图7-1.** 示例7-2的输出
+
+本例中，我们在屏幕上画了10个圆形，但通过眼睛是看不出来的，因为每个圆都会在另一个圆之上。这里就使用了循环计数器变量。我们可以在每次循环调用时对变量添加偏移量（示例7-3和图7-2）。
+
+**示例7-3.** 在for循环中使用循环计数器
+
+```
+function setup() {
+	createCanvas(800, 300);
+}
+
+function draw() {
+	background(1, 75, 100);
+
+	// 圆形属性
+	fill(237, 34, 93);
+	noStroke();
+
+	for(var i=0; i<10; i=i+1){
+		ellipse(i*50, 0, 50, 50);
+	}
+}
+```
+
+[![图7-2. 示例7-3的输出](https://i.taixr.com/2019020302552334.jpeg)](http://alanhou.org/homepage/wp-content/uploads/2019/02/2019020302552334.jpg)
+
+**图7-2.** 示例7-3的输出
+
+我们在喂入ellipse函数前对循环变量乘上了10（圆的直径）。这样我们画的形状就不会重叠。
+
+现在执行代码，就可以看到for循环为我们创建的所有圆了。我们这里所创建的重复运算结构的好处在于，我们可以通过修改循环内的条件值为更大来扩大循环规模。把渲染圆的数量从10变成100或1000仅仅需要修改一个值就可以了。但是，如果使用的数很大时我们就会发现性能下降。
+
+我们来调整代码让圆形等布满屏幕上的整排（示例7-4和图7-3）。
+
+如果屏幕宽是800，圆的直径是50，这就表示页面上的一排可以放800 / 50 个圆形。我们会看到页面的最后会有一点空缺，这是因为第一个圆有部分出画面了。我们可以通过在 x 轴添加直径的一半25来进行偏移来去除这个空缺。如你所知，我们其实不需要自己进行计算，而让JavaScript来为我们计算值。
+
+可以看到目前我们代码中很多值都是硬编码，使用变量来替换可增加灵活，下面我们来重构代码实现这一点。
+
+**示例7-4.** 在屏幕中整排铺满圆形
+
+```
+function setup() {
+	createCanvas(800, 300);
+}
+
+function draw() {
+	background(1, 75, 100);
+
+	// 圆形属性
+	fill(237, 34, 93);
+	noStroke();
+	var diameter = 50;
+
+	for(var i=0; i<width/diameter; i=i+1){
+		ellipse(diameter/2 + i*diameter, 0, diameter, diameter);
+	}
+}
+```
+
+[![图7-3. 示例7-4的输出](https://i.taixr.com/2019020304464875.jpeg)](http://alanhou.org/homepage/wp-content/uploads/2019/02/2019020304464875.jpg)
+
+**图7-3.** 示例7-4的输出
+
+现在只要修改一个值，圆的直径，整个代码都仍会在屏幕上画出足够多的圆。这对我们来说很酷。
+
+假如我们要在屏幕纵向上也铺满屏幕呢？要这么做，我们需要再写一个for循环，将原本横向铺满屏幕的圆在纵向上也铺满。这要求我们在第一个循环内再加一个循环，有效的这一个循环中内嵌另一个循环。参见示例7-5和图7-4。
+
+**示例7-5.** 圆形铺满全屏
+
+```
+function setup() {
+	createCanvas(800, 300);
+}
+
+function draw() {
+	background(1, 75, 100);
+
+	// 圆形属性
+	fill(237, 34, 93);
+	noStroke();
+	var diameter = 50;
+
+	for(var i=0; i<width/diameter; i=i+1){
+		for(var j=0; j<height/diameter; j=j+1){
+			ellipse(
+				diameter/2 + i*diameter, 
+				diameter/2 + j*diameter, 
+				diameter, 
+				diameter);
+		}
+	}
+}
+```
+
+[![图7-4. 示例7-5的输出](https://i.taixr.com/2019020309523919.jpeg)](http://alanhou.org/homepage/wp-content/uploads/2019/02/2019020309523919.jpg)
+
+**图7-4.** 示例7-5的输出
+
+注意本例中ellipse函数的声明方式。我们将代码写在多行上来增强可读性。JavaScript中空格不会影响执行，所以将代码写在多行上不会产生错误。
+
+这段代码已经非常易用了。首先代码很健壮，我们可以修改绘图区大小或所绘制圆形的数量，但仍会正常运行。
+
+有一点需要注意，在循环中再加循环根据执行的运算次数会让程序变得很慢。同时，内嵌的结构有时也会让程序变得不容易阅读。
+
+## random和noise函数
+
+既然我们现在可以创建循环来在每次执行时使用不同值，或许是学习p5.js的random函数不错的时机。p5.js的random函数在每次调用时都会生成一个随机数。这在画图时想要使用随机参数值就非常有用了。
+
+如果我们调用random函数时不传入参数，就会为每个draw函数调用或每帧生成0和1之间的随机值。如果在random函数中传入一个值，就会返回0以上传入值以下的随机值。如果在random函数中传入两个值，就会返回所传入两个值之间的随机值。参见示例7-6来了解这一情况。
+
+**示例7-6.** 使用random函数的示例
+
+```
+console.log(random()); // 0和1之间的随机数
+console.log(random(10)); // 0和10之间的随机数
+console.log(random(100, 1000)); // 100和1000之间的随机数
+```
+
+示例7-7是一个以不同方式使用random函数的小脚本。图7-5显示了该脚本的运行结果。显示的数字是随机生成的，在每次代码执行时都会不同。
+
+**示例7-7.** 使用random函数
+
+```
+function setup() {
+	createCanvas(800, 300);
+	textAlign(CENTER, CENTER);
+	fill(237, 34, 93);
+	frameRate(1);
+}
+
+function draw() {
+	var random_0 = random();
+	var random_1 = random(10);
+	var random_2 = random(100, 1000);
+	var offset = 40;
+
+	textSize(24);
+	background(255);
+	text(random_0, width/2, height/2-offset);
+	text(random_1, width/2, height/2-0);
+	text(random_2, width/2, height/2+offset);
+
+}
+```
+
+[![图7-5. 示例7-7的输出](https://i.taixr.com/2019020310241967.jpeg)](http://alanhou.org/homepage/wp-content/uploads/2019/02/2019020310241967.jpg)
+
+**图7-5.** 示例7-7的输出
+
+通过示例7-8和图7-6，我们可以更新前面的代码（示例7-5）来使用random函数。
+
+**示例7-8.** 使用random函数
+
+```
+function setup() {
+	createCanvas(800, 300);
+}
+
+function draw() {
+	background(1, 75, 100);
+
+	// 圆形属性
+	fill(237, 34, 93);
+	noStroke();
+	var diameter = 50;
+
+	for(var i=0; i< width/diameter; i=i+1){
+		for(var j=0; j<height/diameter; j=j+1){
+			ellipse(
+				diameter/2 + i * diameter,
+				diameter/2 + j * diameter,
+				diameter * random(), // 使用随机函数
+				diameter
+			);
+		}
+	}
+}
+```
+
+![](https://i.taixr.com/6892a61923ac44c0b0a89ad716d93cc0.gif)
+
+**图7-6.** 示例7-8的输出
+
+我们使用random函数生成的结果乘上圆形的宽，这一随机数是调用random所生成的0和1之间值。因为random函数可在任意帧上使用范围内的数，这样的动画看上去变动非常剧烈。如果我们想要随机值逐渐改变，这样看上去更自然，那么就应该使用noise函数了。
+
+我们可以向noise函数喂入任意数值，这样它会返回0和1之间的半随机值。对于相同给定值它总会返回相同的输出。noise函数的好处大于，如果喂入noise函数的值在递增，输出值也会递增。这样通过获取的随机值过渡更加平滑。
+
+要了解noise函数运作的概念，可以将其想像为拥有无限数量像波一样变化的随机值，传入noise函数的值可看作这些随机值的坐标。基本上我们只是在对已存在噪音进行取样。无论何时我们向noise函数传入相同的值，都会得到相同的半随机返回值。
+
+我们装饰重写上述程序（示例7-8）来使用noise函数进行替换。我们向noise函数传入变量frameCount，因为这是在p5.js中获取有序数字很好的方式。但我们会将frameCount除以100以减慢值改变的速度，这样动画也会慢一些。参见示例7-9和图7-7。
+
+**示例7-9.** 使用noise函数
+
+```
+function setup() {
+	createCanvas(800, 300);
+}
+
+function draw() {
+	background(1, 75, 100);
+
+	// 圆形属性
+	fill(237, 34, 93);
+	noStroke();
+	var diameter = 50;
+
+	for(var i=0; i< width/diameter; i=i+1){
+		for(var j=0; j<height/diameter; j=j+1){
+			ellipse(
+				diameter/2 + i * diameter,
+				diameter/2 + j * diameter,
+				diameter * noise(frameCount/100), // 使用noise函数
+				diameter * noise(frameCount/100) // 使用noise函数
+			);
+		}
+	}
+}
+```
+
+![](https://i.taixr.com/582a6a197c584e3189f8a7b3e504eda8.gif)
+
+**图7-7.** 示例7-9的输出
+
+注意现在所有的形状都使用相同的动画。如何想要每个形状的噪音都不相同呢？现在我们的值在重复，因为noise函数在接收相同值时，返回的输出也相同。要使每个形状获取不同的输出值，我们需要使用for 循环的 i 和 j 值来重写以上函数，来调整噪音的取样源。参见示例7-10和图7-8。
+
+**示例7-10.** 对每个圆应用不同的动画
+
+```
+function setup() {
+	createCanvas(800, 300);
+}
+
+function draw() {
+	background(1, 75, 100);
+
+	// 圆形属性
+	fill(237, 34, 93);
+	noStroke();
+	var diameter = 50;
+
+	for(var i=0; i< width/diameter; i=i+1){
+		for(var j=0; j<height/diameter; j=j+1){
+			ellipse(
+				diameter/2 + i * diameter,
+				diameter/2 + j * diameter,
+				diameter * noise(frameCount/100 + j*10000 + i*10000), // 对每个圆应用不同的动画
+				diameter * noise(frameCount/100 + j*10000 + i*10000)
+			);
+		}
+	}
+}
+```
+
+![](https://i.taixr.com/4cb85e4367c446a1be3a991c91107e3e.gif)
+
+**图7-8.** 示例7-10的输出
+
+以上我们使用的乘数10000完全是随机选取的。我们目的是传入noise函数的坐标值相距足够远。
+
+## 总结
+
+循环是编程中最强大的结构之一。这让我们进入计算机的真实计算能力，大规模的重复运算大有限时间内对人类是不可能完成的任务。
+
+本章中我们学习了如何创建for循环并通过内嵌循环来按行重复形状来替代之前的单行形状。
+
+我们还学习了p5.js的random和noise函数，以及它们之间的区别。
+
+## 练习
+
+创建一个循环来创建一个颜色由黑到白逐渐变化的一条列矩形（图7-9）。应通过单个变量来控制所绘制矩形数量。
+
+[![图7-9. 练习图像](https://i.taixr.com/2019020312232498.jpeg)](http://alanhou.org/homepage/wp-content/uploads/2019/02/2019020312232498.jpg)
+
+**图7-9.** 练习图像
+
+**译者补充，仅供参考：**
+
+```
+function setup() {
+	createCanvas(800, 300);
+}
+
+function draw() {
+	background(255);
+	num = 10; // 绘制矩形数量
+	
+	noStroke();
+	
+	for(i=0; i<num; i=i+1){
+		// fill(0, 0, 0, noise(i*10000)*255); // 实现随机颜色变化
+		fill(0, 0, 0, i/num*255); //i为 num-i-1可实现与原书相同顺序的矩形
+		rect(i*width/num, 0, width/num, height);
+	}
+}
+```
