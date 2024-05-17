@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkportal=self.webpackChunkportal||[]).push([[1903],{1912:l=>{l.exports=JSON.parse('{"blogBasePath":"/portal/blog","blogTitle":"Blog"}')}}]);
