@@ -2,11 +2,26 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://www.taixr.com/blog</id>
     <title>Taixr Blog</title>
-    <updated>2021-08-26T00:00:00.000Z</updated>
+    <updated>2024-05-24T00:00:00.000Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://www.taixr.com/blog"/>
     <subtitle>Taixr Blog</subtitle>
     <icon>https://www.taixr.com/https://i.taixr.com/logo.jpeg</icon>
+    <entry>
+        <title type="html"><![CDATA[Prompt Principle for Instructions]]></title>
+        <id>https://www.taixr.com/blog/prompt-principle</id>
+        <link href="https://www.taixr.com/blog/prompt-principle"/>
+        <updated>2024-05-24T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[| ---------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |]]></summary>
+        <content type="html"><![CDATA[<table><thead><tr><th style="text-align:right">#Principle</th><th>Prompt Principle for Instructions</th></tr></thead><tbody><tr><td style="text-align:right">1</td><td>No need to be polite with LLM so there is no need to add phrases like "please", "if you don't mind', "thank you" "I would like to", etc., and get Straight to the point.</td></tr><tr><td style="text-align:right">2</td><td>Integrate the intended audience in the prompt, e.g., the audience is an expert in the field.</td></tr><tr><td style="text-align:right">3</td><td>Break down complex tasks into a sequence of simpler prompts in an interactive conversation.</td></tr><tr><td style="text-align:right">4</td><td>Employ affirmative directives such as 'do,' while steering clear of negative language like 'don't'.</td></tr><tr><td style="text-align:right">5</td><td>When you need clarity or a deeper understanding of a topic, idea, or any piece of information, utilize the following prompts: <br> o Explain [insert specific topic] in simple terms. <br> o Explain to me like I'm 11 years old. <br> o Explain to me as if I'm a beginner in [field]. <br> o Write the [essay/text/paragraph] using simple English like you're explaining something to a 5-year-old.</td></tr><tr><td style="text-align:right">6</td><td>Add "I'm going to tip $xxx for a better solution!"</td></tr><tr><td style="text-align:right">7</td><td>Implement example-driven prompting (Use few-shot prompting)</td></tr><tr><td style="text-align:right">8</td><td>When formatting your prompt, start with '###Instruction###', followed by either '###Example###' or '###Ouestion###' if relevant. Subsequently, present your content. Use one or more line breaks to separate instructions. examples. questions. context, and inuput data.</td></tr><tr><td style="text-align:right">9</td><td>Incorporate the following phrases: "Your task is" and "You MUST",</td></tr><tr><td style="text-align:right">10</td><td>Incorporate the following phrases: "You will be penalized"</td></tr><tr><td style="text-align:right">11</td><td>Use the phrase "Answer a question given in a natural, human-like manner" in your prompts.</td></tr><tr><td style="text-align:right">12</td><td>Use leading words like writing "think step by step".</td></tr><tr><td style="text-align:right">13</td><td>Add to your prompt the following phrase "Ensure that your answer is unbiased and does not rely on stereotypes"</td></tr><tr><td style="text-align:right">14</td><td>Allow the model to elicit precise details and requirements from you by asking you questions until he has enough information to provide the needed output(for example, "From now on. I would like you to ask me questions to..."</td></tr><tr><td style="text-align:right">15</td><td>To inquire about a specific topic or idea or any information and you want to test your understanding, you can use the following phrase: "Teach me the [Any theorem/topic/rule name] and include a test at the end, but don't give me the answers and then tell me if I got the answer right when I respond".</td></tr><tr><td style="text-align:right">16</td><td>Assign a role to the large language models.</td></tr><tr><td style="text-align:right">17</td><td>Use Delimiters.</td></tr><tr><td style="text-align:right">18</td><td>Repeat a specifc word or phrase multiple times within a prompt.</td></tr><tr><td style="text-align:right">19</td><td>Combine Chain-of-thought (CoT) with few-Shot prompts.</td></tr><tr><td style="text-align:right">20</td><td>Use output primers, which involve concluding your prompt with the beginning of the desired output. Utilize output primers by ending your prompt with the start of the anticipated response.</td></tr><tr><td style="text-align:right">21</td><td>To write an essay /text /paragraph /article or any type of text that should be detailed: "Write a detailed [essay/text/paragraph] for me on [topic] in detail by adding all the information necessary".</td></tr><tr><td style="text-align:right">22</td><td>To correct/change specific text without changing its style: "Try to revise every paragraph sent by users. You should only improve the users grammar and vocabulary and make sure it sounds natural. You should not change the writing style. such as making a formal paragraph casual".</td></tr><tr><td style="text-align:right">23</td><td>When you have a complex coding prompt that may be in different files: "From now and on whenever vou generate code that spans more than one file, generate a [programming language ] script that can be run to automatically create the specifed files or make changes to existing files to insert the generated code. [your question]".</td></tr><tr><td style="text-align:right">24</td><td>When you want to initiate or continue a text using specific words, phrases, or sentences, utilize the following prompt: o I'm providing you with the beginning [song lyrics/story/paragraph/essay.…]: [Insert lyrics/words/sentence]'. Finish it based on the words provided. Keep the flow consistent.</td></tr><tr><td style="text-align:right">25</td><td>Clearly state the requirements that the model must follow in order to produce content. in the form or the keywords. regulations, hint, or instructions</td></tr><tr><td style="text-align:right">26</td><td>To write any text, such as an essay or paragraph, that is intended to be similar to a provided sample, include thefollowing instructions: o Please use the same language based on the provided paragraph [/title/text /essay/answer].</td></tr></tbody></table>
+<p>Source: <a href="https://x.com/MindBranches/status/1793603773396664633" target="_blank" rel="noopener noreferrer">https://x.com/MindBranches/status/1793603773396664633</a></p>]]></content>
+        <author>
+            <name>Alan Hou</name>
+            <uri>https://github.com/alanhou</uri>
+        </author>
+        <category label="LLM" term="LLM"/>
+        <category label="Prompt" term="Prompt"/>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Welcome]]></title>
         <id>https://www.taixr.com/blog/welcome</id>
@@ -26,12 +41,8 @@
 <p>The blog supports tags as well!</p>
 <p><strong>And if you don't want a blog</strong>: just delete this directory, and use <code>blog: false</code> in your Docusaurus config.</p>]]></content>
         <author>
-            <name>Sébastien Lorber</name>
-            <uri>https://sebastienlorber.com</uri>
-        </author>
-        <author>
-            <name>Yangshun Tay</name>
-            <uri>https://github.com/yangshun</uri>
+            <name>Alan Hou</name>
+            <uri>https://github.com/alanhou</uri>
         </author>
         <category label="facebook" term="facebook"/>
         <category label="hello" term="hello"/>
@@ -46,8 +57,8 @@
         <content type="html"><![CDATA[<p>Blog posts support <a href="https://docusaurus.io/docs/markdown-features" target="_blank" rel="noopener noreferrer">Docusaurus Markdown features</a>, such as <a href="https://mdxjs.com/" target="_blank" rel="noopener noreferrer">MDX</a>.</p>
 <div class="theme-admonition theme-admonition-tip admonition_xJq3 alert alert--success"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 12 16"><path fill-rule="evenodd" d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 1.22 0 2.36.42 3.22 1.19C10.55 2.94 11 3.94 11 5c0 .66-.44 1.78-.86 2.48zM4 14h5c-.23 1.14-1.3 2-2.5 2s-2.27-.86-2.5-2z"></path></svg></span>tip</div><div class="admonitionContent_BuS1"><p>Use the power of React to create interactive blog posts.</p><div class="language-js codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-js codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token operator" style="color:#393A34">&lt;</span><span class="token plain">button onClick</span><span class="token operator" style="color:#393A34">=</span><span class="token punctuation" style="color:#393A34">{</span><span class="token punctuation" style="color:#393A34">(</span><span class="token punctuation" style="color:#393A34">)</span><span class="token plain"> </span><span class="token arrow operator" style="color:#393A34">=&gt;</span><span class="token plain"> </span><span class="token function" style="color:#d73a49">alert</span><span class="token punctuation" style="color:#393A34">(</span><span class="token string" style="color:#e3116c">'button clicked!'</span><span class="token punctuation" style="color:#393A34">)</span><span class="token punctuation" style="color:#393A34">}</span><span class="token operator" style="color:#393A34">&gt;</span><span class="token maybe-class-name">Click</span><span class="token plain"> me</span><span class="token operator" style="color:#393A34">!</span><span class="token operator" style="color:#393A34">&lt;</span><span class="token operator" style="color:#393A34">/</span><span class="token plain">button</span><span class="token operator" style="color:#393A34">&gt;</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div><button>Click me!</button></div></div>]]></content>
         <author>
-            <name>Sébastien Lorber</name>
-            <uri>https://sebastienlorber.com</uri>
+            <name>Alan Hou</name>
+            <uri>https://github.com/alanhou</uri>
         </author>
         <category label="docusaurus" term="docusaurus"/>
     </entry>
@@ -75,25 +86,7 @@
 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque elementum dignissim ultricies. Fusce rhoncus ipsum tempor eros aliquam consequat. Lorem ipsum dolor sit amet</p>
 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque elementum dignissim ultricies. Fusce rhoncus ipsum tempor eros aliquam consequat. Lorem ipsum dolor sit amet</p>
 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque elementum dignissim ultricies. Fusce rhoncus ipsum tempor eros aliquam consequat. Lorem ipsum dolor sit amet</p>]]></content>
-        <author>
-            <name>Endilie Yacop Sucipto</name>
-            <uri>https://github.com/endiliey</uri>
-        </author>
         <category label="hello" term="hello"/>
-        <category label="docusaurus" term="docusaurus"/>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[First Blog Post]]></title>
-        <id>https://www.taixr.com/blog/first-blog-post</id>
-        <link href="https://www.taixr.com/blog/first-blog-post"/>
-        <updated>2019-05-28T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque elementum dignissim ultricies. Fusce rhoncus ipsum tempor eros aliquam consequat. Lorem ipsum dolor sit amet]]></summary>
-        <content type="html"><![CDATA[<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque elementum dignissim ultricies. Fusce rhoncus ipsum tempor eros aliquam consequat. Lorem ipsum dolor sit amet</p>]]></content>
-        <author>
-            <name>Gao Wei</name>
-            <uri>https://github.com/wgao19</uri>
-        </author>
-        <category label="hola" term="hola"/>
         <category label="docusaurus" term="docusaurus"/>
     </entry>
 </feed>
