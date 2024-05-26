@@ -25,8 +25,12 @@ const config: Config = {
   // useful metadata like html lang. For example, if your site is Chinese, you
   // may want to replace "en" with "zh-Hans".
   i18n: {
-    defaultLocale: 'en',
-    locales: ['en'],
+    defaultLocale: 'zh',
+    locales: ['zh', 'en'],
+    localeConfigs: {
+      zh: { label: '简体中文' },
+      en: { label: 'English' },
+    },
   },
 
   presets: [
@@ -80,7 +84,15 @@ const config: Config = {
         },
         { to: '/blog', label: 'Blog', position: 'left' },
         {
-          href: 'https://github.com/taixr/portal',
+          type: 'search',
+          position: 'right',
+        },
+        // {
+        //   type: 'localeDropdown',
+        //   position: 'right'
+        // },
+        {
+          href: 'https://github.com/taixr',
           label: 'GitHub',
           position: 'right',
         },
@@ -105,6 +117,10 @@ const config: Config = {
               label: 'Facebook',
               href: 'https://www.facebook.com/taixr',
             },
+            {
+              label: 'TikTok',
+              href: 'https://www.tiktok.com/@taixr',
+            },
           ],
         },
         {
@@ -122,6 +138,12 @@ const config: Config = {
         },
       ],
       copyright: `Copyright © ${new Date().getFullYear()} Taixr`,
+    },
+    algolia: {
+      contextualSearch: true,
+      appId: 'PEDULFQVAW',
+      apiKey: '127563ccde8202078d4c0e12a66e86ca',
+      indexName: 'taixr',
     },
     prism: {
       theme: prismThemes.github,
