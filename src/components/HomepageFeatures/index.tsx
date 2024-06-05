@@ -10,32 +10,29 @@ type FeatureItem = {
 
 const FeatureList: FeatureItem[] = [
   {
-    title: 'Easy to Use',
+    title: 'Learn JavaScript with p5.js',
     Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+        从本书中获得的技能融汇贯通，学习网页应用、可编程机器人或者生成艺术等知识。
       </>
     ),
   },
   {
-    title: 'Focus on What Matters',
+    title: 'Python自动化脚本-运维人员宝典',
     Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+        本书会围绕整个开发过程，从配置和规划到自动化测试和创建不同的命令行工具。
       </>
     ),
   },
   {
-    title: 'Powered by React',
+    title: '博客文章',
     Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
+        分享人工智能(Artificial Intelligence)和XR(虚拟现实、增强现实、混合现实)等相关技术的最新动态
       </>
     ),
   },

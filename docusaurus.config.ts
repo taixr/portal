@@ -106,7 +106,7 @@ const config: Config = {
           items: [
             {
               label: 'Tutorial',
-              to: '/docs/intro',
+              to: '/docs/category/learn-javascript-with-p5js',
             },
           ],
         },
@@ -120,6 +120,10 @@ const config: Config = {
             {
               label: 'TikTok',
               href: 'https://www.tiktok.com/@taixr',
+            },
+            {
+              label: 'Bilibili',
+              href: 'https://space.bilibili.com/1536802703',
             },
           ],
         },
