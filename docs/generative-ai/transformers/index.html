@@ -13,7 +13,7 @@
 
 
 <link rel="search" type="application/opensearchdescription+xml" title="Taixr" href="/opensearch.xml"><link rel="stylesheet" href="/assets/css/styles.4f939f39.css">
-<script src="/assets/js/runtime~main.295c2cf6.js" defer="defer"></script>
+<script src="/assets/js/runtime~main.e4456240.js" defer="defer"></script>
 <script src="/assets/js/main.3b0724c9.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
@@ -186,13 +186,13 @@
 <p><strong>预测</strong>：一个额外的层将最终表示处理为任务相关的最终输出。对于文本生成，这涉及一个线性层将上下文嵌入映射到词空间，随后进行softmax运算以预测序列中的下一个token。</p>
 </li>
 </ul>
-<p><img decoding="async" loading="lazy" src="https:/i.taixr.com/2024060611015857.png" alt="图2-1：基于transformer的模型的架构" class="img_ev3q"></p>
+<p><img decoding="async" loading="lazy" src="https://i.taixr.com/2024060611015857.png" alt="图2-1：基于transformer的模型的架构" class="img_ev3q"></p>
 <p><strong>图2-1：</strong> 基于transformer的模型的架构</p>
 <p>当然，这只是对transformer架构的简化描述。深入研究自注意力机制的工作原理或transformer块的内部机制暂不在我们的讨论范围。但理解transformer模型的顶层架构有助于掌握这些模型的工作原理以及将其应用于各种任务。这种架构使transformer在各种任务和领域中取得了前所未有的表现，你会发现它们不断出现——不仅是在本系列文章，而是在整个学科中。</p>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="transformer模型家族">Transformer模型家族<a href="#transformer模型家族" class="hash-link" aria-label="Transformer模型家族的直接链接" title="Transformer模型家族的直接链接">​</a></h2>
 <h3 class="anchor anchorWithStickyNavbar_LWe7" id="序列到序列的任务">序列到序列的任务<a href="#序列到序列的任务" class="hash-link" aria-label="序列到序列的任务的直接链接" title="序列到序列的任务的直接链接">​</a></h3>
 <p>在本章的开头，我们使用GPT-2进行了自回归文本生成实验。GPT-2是基于解码器的transformer示例，它具有一组transformer块，用于处理输入序列。这是当今流行的方式，但原始的transformer论文《<a href="https://arxiv.org/abs/1706.03762" target="_blank" rel="noopener noreferrer">Attention Is All You Need</a>》中使用了一种更复杂的架构，称为编码器-解码器架构，这种架构至今仍在广泛使用。</p>
-<p><img decoding="async" loading="lazy" src="https:/i.taixr.com/2023041405113684.webp" alt="机器学习 Transformer" class="img_ev3q"></p>
+<p><img decoding="async" loading="lazy" src="https://i.taixr.com/2023041405113684.webp" alt="机器学习 Transformer" class="img_ev3q"></p>
 <p>transformer论文专注于机器翻译这一序列到序列的任务。当时，机器翻译的最佳结果是通过循环神经网络（RNN）实现的，例如LSTM和GRU（读者如果不熟悉，不必担心）。该论文通过专注于注意力方法展示了更好的结果，并表达了其可扩展性和训练更容易。这些因素——出色的表现、稳定的训练和易于扩展——是transformer取得成功并被应用于多种任务的原因，下一节将更深入地探讨这些方面。</p>
 <p>在编码器-解码器模型中，就像论文中描述的原始transformer模型，一组transformer块（称为编码器）将输入序列处理成一组丰富的表示，然后将其传递给另一组transformer块（称为解码器），解码它们为输出序列。这种将一个序列转换为另一个序列的方法称为序列到序列或seq2seq，适用于翻译、摘要或问答等任务。</p>
 <p>例如，将一段英文句子喂给翻译模型的编码器，生成一个捕获输入含义的嵌入。然后，解码器使用这个嵌入生成对应的法语句子。生成过程在解码器中按token逐一进行，在本章早些时候生成序列时有演示。然而，对每个后续token的预测不仅受到正在生成的序列中前一个token的影响，还受到来自编码器的输出的影响。</p>
@@ -210,7 +210,7 @@
 <p>在单编码器、单解码器和编码器-解码器模型之中，已出现大量新的开源和闭源语言模型，如GPT-4、Mistral、Falcon、Llama 2、Qwen、Yi、Claude、Bloom、PaLM等。杨立昆（LeCun）在Twitter上发布了一张有趣的<a href="https://twitter.com/i/web/status/1651762787373428736" target="_blank" rel="noopener noreferrer">族谱图</a>，摘自一篇<a href="http://arxiv.org/abs/2304.13712" target="_blank" rel="noopener noreferrer">研究论文</a>，展示了截至2024年transformer在NLP领域中的丰富且富有成果的影响。</p>
 <p><img decoding="async" loading="lazy" src="https://i.taixr.com/2024060700570685.jpeg" alt="大语言模型进化树" class="img_ev3q"></p>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="预训练的强大">预训练的强大<a href="#预训练的强大" class="hash-link" aria-label="预训练的强大的直接链接" title="预训练的强大的直接链接">​</a></h2>
-<h3 class="anchor anchorWithStickyNavbar_LWe7" id="transformer的核心洞察">Transformer的核心洞察<a href="#transformer的核心洞察" class="hash-link" aria-label="Transformer的核心洞察的直接链接" title="Transformer的核心洞  察的直接链接">​</a></h3>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="transformer的核心洞察">Transformer的核心洞察<a href="#transformer的核心洞察" class="hash-link" aria-label="Transformer的核心洞察的直接链接" title="Transformer的核心洞察的直接链接">​</a></h3>
 <p>现有模型都非常强大。在前几节中，我们探讨了使用GPT-2和GPT-NeoX生成文本并进行零样本分类。transformer模型在许多其他语言任务中也表现出最佳性能，如文本分类、机器翻译和基于输入文本的问答。为什么transformer能这么好？</p>
 <p>第一点是注意力机制的使用，正如本章引文中所提到的。以前的NLP方法，如循环神经网络，难以处理长句子。注意力机制使得transformer模型能关注长序列并学习长程关系。也就是说，transformer可以估计某些标记对其他标记的相关性。</p>
 <p>第二个关键点是其可扩展性。transformer架构具有优化的并行化实现，研究表明这些模型可以扩展以处理高复杂度和大规模数据集。虽然最初是为文本数据设计的，但transformer架构足够灵活，可支持不同的数据类型并处理不规则的输入。</p>

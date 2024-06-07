@@ -13,7 +13,7 @@
 
 
 <link rel="search" type="application/opensearchdescription+xml" title="Taixr" href="/en/opensearch.xml"><link rel="stylesheet" href="/en/assets/css/styles.4f939f39.css">
-<script src="/en/assets/js/runtime~main.d4c6019f.js" defer="defer"></script>
+<script src="/en/assets/js/runtime~main.32a065af.js" defer="defer"></script>
 <script src="/en/assets/js/main.8b529d76.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
@@ -186,22 +186,22 @@
 <p><strong>预测</strong>：一个额外的层将最终表示处理为任务相关的最终输出。对于文本生成，这涉及一个线性层将上下文嵌入映射到词空间，随后进行softmax运算以预测序列中的下一个token。</p>
 </li>
 </ul>
-<p><img decoding="async" loading="lazy" src="https:/i.taixr.com/2024060611015857.png" alt="图2-1：基于transformer的模型的架构" class="img_ev3q"></p>
+<p><img decoding="async" loading="lazy" src="https://i.taixr.com/2024060611015857.png" alt="图2-1：基于transformer的模型的架构" class="img_ev3q"></p>
 <p><strong>图2-1：</strong> 基于transformer的模型的架构</p>
 <p>当然，这只是对transformer架构的简化描述。深入研究自注意力机制的工作原理或transformer块的内部机制暂不在我们的讨论范围。但理解transformer模型的顶层架构有助于掌握这些模型的工作原理以及将其应用于各种任务。这种架构使transformer在各种任务和领域中取得了前所未有的表现，你会发现它们不断出现——不仅是在本系列文章，而是在整个学科中。</p>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="transformer模型家族">Transformer模型家族<a href="#transformer模型家族" class="hash-link" aria-label="Direct link to Transformer模型家族" title="Direct link to Transformer模型家族">​</a></h2>
 <h3 class="anchor anchorWithStickyNavbar_LWe7" id="序列到序列的任务">序列到序列的任务<a href="#序列到序列的任务" class="hash-link" aria-label="Direct link to 序列到序列的任务" title="Direct link to 序列到序列的任务">​</a></h3>
-<p>在本章的开头，我们使用GPT-2进行了自回归文本生成实验。GPT-2是基于解码器的transformer示例，它具有一组transformer块，用于处理输入序列。这是当今流行的方式，但原始的transformer论文《<a href="https://arxiv.org/abs/1706.03762" target="_blank" rel="noopener noreferrer">Attention Is All You Need</a>》中使用了一种更复杂的架构，称为编码器-解码器架构，这种架构至今仍在广泛使用。</p>
-<p><img decoding="async" loading="lazy" src="https:/i.taixr.com/2023041405113684.webp" alt="机器学习 Transformer" class="img_ev3q"></p>
+<p>在本章的开头，我们使用GPT-2进行了自回归文本生成实验。GPT-2是基于解码器的transformer示例，它具有一组transformer块，用于处理输入序列。这是当今流行的方式，但原始的transformer论文《<a href="https://arxiv.org/abs/1706.03762" target="_blank" rel="noopener noreferrer">Attention Is All You Need</a>》中使用了一种更复杂的架构，称为编码器-解码器架构，这种架构至今仍在广泛使用  。</p>
+<p><img decoding="async" loading="lazy" src="https://i.taixr.com/2023041405113684.webp" alt="机器学习 Transformer" class="img_ev3q"></p>
 <p>transformer论文专注于机器翻译这一序列到序列的任务。当时，机器翻译的最佳结果是通过循环神经网络（RNN）实现的，例如LSTM和GRU（读者如果不熟悉，不必担心）。该论文通过专注于注意力方法展示了更好的结果，并表达了其可扩展性和训练更容易。这些因素——出色的表现、稳定的训练和易于扩展——是transformer取得成功并被应用于多种任务的原因，下一节将更深入地探讨这些方面。</p>
 <p>在编码器-解码器模型中，就像论文中描述的原始transformer模型，一组transformer块（称为编码器）将输入序列处理成一组丰富的表示，然后将其传递给另一组transformer块（称为解码器），解码它们为输出序列。这种将一个序列转换为另一个序列的方法称为序列到序列或seq2seq，适用于翻译、摘要或问答等任务。</p>
 <p>例如，将一段英文句子喂给翻译模型的编码器，生成一个捕获输入含义的嵌入。然后，解码器使用这个嵌入生成对应的法语句子。生成过程在解码器中按token逐一进行，在本章早些时候生成序列时有演示。然而，对每个后续token的预测不仅受到正在生成的序列中前一个token的影响，还受到来自编码器的输出的影响。</p>
 <p>将编码器端的输出合并到解码器堆栈中的机制称为交叉注意力。它类似于自注意力，不同之处在于输入中的每个token（解码器正在处理的序列）关注的是来自编码器的上下文，而不是其序列中的其他token。交叉注意力层与自注意力交错，让解码器能够使用其序列中的上下文和来自编码器的信息。</p>
-<p>在transformer论文发表后，现有的序列到序列模型，如Marian NMT，将这些技术作为其架构的核心部分进行了整合。使  用这些思想开发了新的模型。其中一个值得关注的是BART（“<code>Bidirectional and Auto-Regressive Transformers</code>”的缩写）。在预训练期间，BART会破坏输入序列，并尝试在解码器输出中重建。之后，BART会针对其他生成任务（如翻译或摘要）进行微调，利用预训练期间获得的丰富序列表示。顺便说一下，输入破坏是扩散模型背后的关键思想之一，我们将在第三章中讲到。</p>
+<p>在transformer论文发表后，现有的序列到序列模型，如Marian NMT，将这些技术作为其架构的核心部分进行了整合。 使用这些思想开发了新的模型。其中一个值得关注的是BART（“<code>Bidirectional and Auto-Regressive Transformers</code>”的缩写）。在预训练期间，BART会破坏输入序列，并尝试在解码器输出中重建。之后，BART会针对其他生成任务（如翻译或摘要）进行微调，利用预训练期间获得的丰富序列表示。顺便说一下，输入破坏是扩散模型背后的关键思想之一，我们将在第三章中讲到。</p>
 <p>另一个值得注意的序列到序列模型是<a href="http://arxiv.org/abs/1910.10683" target="_blank" rel="noopener noreferrer">T5</a>。T5以通用的方式处理多种NLP任务，通过将60种任务表述为文本到文本的转换。不同任务不需要自定义层或代码，训练使用相同的超参数，模型从多样化的数据集中学习。</p>
 <p>我们刚刚讨论了编码器-解码器和单解码器架构。常见的问题是，为什么像翻译这样的任务需要编码器-解码器模型，而诸如GPT-2的单解码器模型也能表现良好的结果。编码器-解码器模型旨在将整个输入序列翻译为输出序列，使其极其适合翻译任务。而单解码器模型专注于预测序列中的下一个token。最初，像GPT-2这样的单解码器模型在零样本学习场景中的能力不如更先进的模型如GPT-3，但这不仅仅是因为缺少编码器。像GPT-3这样的高级模型在零样本能力上的提升源自更大的训练数据、改进的训练技术和更大的模型规模。尽管seq2seq模型中的编码器在理解输入序列的完整上下文中发挥着关键作用，但单解码器模型的进步使它们更加有效和多样化，即使对于传统上依赖seq2seq模型的任务也是如此。</p>
 <h3 class="anchor anchorWithStickyNavbar_LWe7" id="编码器模型">编码器模型<a href="#编码器模型" class="hash-link" aria-label="Direct link to 编码器模型" title="Direct link to 编码器模型">​</a></h3>
-<p>可以看到，原始的transformer模型 基于编码器-解码器架构，这种架构在BART或T5等模型中得到了进一步探索。此外，编码器或解码器可以单独训练和使用，从而产生不同的transformer家族。本章的前几节探讨了单解码器或自回归模型。这些模型专门用于使用我们描述的技术生成文本，并且表现令人印象深刻，如ChatGPT、Claude、Llama或Falcon。</p>
+<p>可以看到，原始的transformer模 型基于编码器-解码器架构，这种架构在BART或T5等模型中得到了进一步探索。此外，编码器或解码器可以单独训练和使用，从而产生不同的transformer家族。本章的前几节探讨了单解码器或自回归模型。这些模型专门用于使用我们描述的技术生成文本，并且表现令人印象深刻，如ChatGPT、Claude、Llama或Falcon。</p>
 <p>另一方面，编码器模型专门用于从文本序列中获得丰富的表示，可用于分类等任务，或为检索系统准备大量文档的语义嵌入（通常是几百个数字的向量）。最著名的transformer编码器模型可能是BERT，它引入了掩码语言模型目标，后来由BART进一步探索。</p>
 <p>因果语言模型预测给定前一个标记的下一个token——如GPT-2。模型只能关注给定标记左侧的上下文。在编码器模型中使用的不同方法称为掩码语言模型（MLM）。掩码语言模型在著名的BERT论文中提出，它对模型进行预训练以学习“完形填空”。给定一个输入文本，我们随机掩盖一些标记，模型必须预测隐藏的token。与因果语言模型不同，MLM使用掩码标记左右两侧的序列，这就是BERT名称中表示“双向”的B。它有助于创建给定文本的表现。这些模型在底层使用transformer架构的编码器部分。</p>
 <div class="codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">from transformers import pipeline</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">fill_masker = pipeline(model=&quot;bert-base-uncased&quot;)</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">fill_masker(&quot;The [MASK] is made of milk.&quot;)</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
@@ -216,7 +216,7 @@
 <p>第二个关键点是其可扩展性。transformer架构具有优化的并行化实现，研究表明这些模型可以扩展以处理高复杂度和大规模数据集。虽然最初是为文本数据设计的，但transformer架构足够灵活，可支持不同的数据类型并处理不规则的输入。</p>
 <p>第三个关键点是预训练和微调的能力。传统的任务方法，如电影评论分类，受到标注数据可用性的限制。模型将从头开始在大量标注示例上训练，尝试直接从输入文本预测标签。这种方法通常称为监督学习。然而，它有一个显著的缺点：需要大量标注数据才能有效训练。这是一个问题，因为标注数据昂贵且耗时。在许多领域甚至没有可用的数据。</p>
 <p>为解决这个问题，研究人员开始寻找一种方法，在现有数据上预训练模型，然后为特定任务进行微调（或调整）。这种方法称为迁移学习，是许多领域（如自然语言处理和计算机视觉）现代机器学习的基础。NLP的初期工作集中在寻找特定领域的语料库进行语言模型预训练，但<a href="http://arxiv.org/abs/1801.06146" target="_blank" rel="noopener noreferrer">ULMFiT</a>等论文表明，即使在维基百科等通用文本上进行预训练，也能在微调下游任务（如情感分析或问答）时取得令人非常好的结果。这为transformer的崛起奠定了基础，事实证明transformer非常适合学习丰富的语言表示。</p>
-<p>预训练的理念是，在一  个大型未标注数据集上训练模型，然后针对新目标任务进行微调，这样所需的标注数据就少得多。在转向NLP之前，迁移学习已经在构成现代计算机视觉骨干的卷积神经网络中取得了巨大成功。在这种情况下，首先在一个包含大量标注图像的分类任务上训练一个大型模型。通过这个过程，模型学习到可以在不同但相关的问题上利用通用特征。例如，我们可以在成千上万个类别上预训练一个模型，然后微调它来分类图片是否为热狗。</p>
+<p>预训练的理念是，在  一个大型未标注数据集上训练模型，然后针对新目标任务进行微调，这样所需的标注数据就少得多。在转向NLP之前，迁移学习已经在构成现代计算机视觉骨干的卷积神经网络中取得了巨大成功。在这种情况下，首先在一个包含大量标注图像的分类任务上训练一个大型模型。通过这个过程，模型学习到可以在不同但相关的问题上利用通用特征。例如，我们可以在成千上万个类别上预训练一个模型，然后微调它来分类图片是否为热狗。</p>
 <p>对于transformer，更进一步地采用了自监督预训练。我们可以在大型未标注文本数据上预训练一个模型。怎么做呢？思考一下因果模型如GPT。模型预测下一个词是什么。那么，我们不需要任何标签来获取训练数据。给定一个文本语料库，我们可以在序列后屏蔽标记，并训练模型学习预测它们。就像在计算机视觉案例中一样，预训练为模型提供了文本的有意义表示。然后我们可以微调模型来执行其他任务，如生成自己推文风格的文本或特定领域的文本（例如，公司对话）。由于模型已经学习了语言表示，微调所需的数据比从头开始训练少得多。</p>
 <p>对于许多任务，输入的丰富表示比能够预测下一个标记更重要。例如，如果你想微调一个模型来预测电影评论的情感，掩码语言模型会更强大。像GPT-2这样的模型旨在优化文本生成，而不是构建强大的文本表示。另一方面，像BERT这样的模型非常适合这个任务。如前所述，编码器模型的最后一层输出的是输入序列的稠密表示，称为嵌入。然后可以通过在编码器上添加一个小型简单的网络并微调模型来完成特定任务。例如，我们可以在BERT编码器输出的基础上添加一个简单的线性层，以预测文档的情感。可以采用这种方法来处理各种任务：</p>
 <ul>
@@ -232,7 +232,7 @@
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="transformer回顾">Transformer回顾<a href="#transformer回顾" class="hash-link" aria-label="Direct link to Transformer回顾" title="Direct link to Transformer回顾">​</a></h2>
 <p>我们讨论了三种架构类型：</p>
 <ul>
-<li><strong>基于编码器的架构</strong>，如BERT、DistilBERT和RoBERTa，适合需要理解整个输入的任务。这些模型输出捕获输入序列含义的上下文嵌入。我们可以在这些嵌入的基  础上添加一个小型网络，进行训练完成依赖语义信息的新特定任务（如识别文本中的实体或对序列进行分类）。<br>
+<li><strong>基于编码器的架构</strong>，如BERT、DistilBERT和RoBERTa，适合需要理解整个输入的任务。这些模型输出捕获输入序列含义的上下文嵌入。我们可以在这些嵌入的  基础上添加一个小型网络，进行训练完成依赖语义信息的新特定任务（如识别文本中的实体或对序列进行分类）。<br>
 <strong>注</strong>：DistilBERT是一个较小的模型，保留了原BERT 95%的功能，但参数量要少40%。RoBERTa是一个基于BERT的强大模型，采用了不同的超参数进行训练，规模更大。</li>
 <li><strong>基于解码器的架构</strong>，如GPT-2、Falcon和Llama，适合生成新文本。</li>
 <li><strong>编码器-解码器架构</strong>，或seq2seq，如BART和T5，适合基于给定输入生成新句子的任务，如摘要或翻译。</li>
@@ -245,7 +245,7 @@
 <ul>
 <li><strong>transformer非常庞大</strong>。研究一致表明，更大的模型表现更好。尽管这很令人兴奋，但也带来了担忧。首先，一些最强大的模型仅训练算力就花费数千万美元——这意味着只有少数机构能够训练非常大的底座模型，限制了没有这些资源的机构的研究。其次，使用如此大量的计算能力也可能带来生态影响——这数百万GPU小时需要耗费大量的电力。第三，即便一些模型是开源的，运行它们可能需要很多GPU（比如马斯克开源的Grok据计算需要8张H100才能运行起来）。第五章将探讨一些在没有多GPU的情况下使用这些大语言模型的技术。即便如此，在资源受限的环境中部署它们仍然是一个常见的挑战。</li>
 <li><strong>顺序处理</strong>：在解码器小节讲到，我们必须为每个新标记处理所有先前的标记。这意味着在一个序列中生成第10000个token将比生成初始标记花费更长的时间。在计算机科学术语中，transformer的时间复杂度与输入长度成二次方关系。即随着输入长度的增加，处理所需的时间成平方增长，使得在非常长的文档中扩展或在某些实时场景中使用这些模型变得具有挑战性。虽然transformer在许多任务中表现出色，但其算力需求在生产中使用时需要仔细考虑和优化。话虽如此，已经有很多研究致力于使transformer在处理超长序列时更高效。</li>
-<li><strong>固定输入大小</strong>：transformer模型可以处理的最大标记数量取决于基础模型。一些模型只能处理512个token，而新技术可以扩展到数十万个标记。模型可以处理的标记数  量称为上下文窗口。在选择预训练模型时，这是一个需要注意的重要事项。不能简单地将整本书传递给transformer，就期待其能够总结整书。</li>
+<li><strong>固定输入大小</strong>：transformer模型可以处理的最大标记数量取决于基础模型。一些模型只能处理512个token，而新技术可以扩展到数十万个标记。模型可以处理的标记  数量称为上下文窗口。在选择预训练模型时，这是一个需要注意的重要事项。不能简单地将整本书传递给transformer，就期待其能够总结整书。</li>
 <li><strong>有限的可解释性</strong>：transformer经常因缺乏可解释性而受到批评。</li>
 </ul>
 <p>以上都是非常活跃的研究领域——人们一直在探索如何用更少的算力训练和运行模型（例如，第五章将探讨的QLoRA），如何加快生成速度（例如闪存注意力和辅助生成），如何实现不受限制的输入大小（例如RoPE和注意力下沉），以及如何解释注意力机制。</p>
@@ -256,7 +256,7 @@
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="文本之外">文本之外<a href="#文本之外" class="hash-link" aria-label="Direct link to 文本之外" title="Direct link to 文本之外">​</a></h2>
 <p>Transformer已经被用于许多将数据表示为文本的任务。一个明显的例子是代码生成——我们可以使用大量代码数据来训练语言模型，而不是用通用数据，根据刚刚学到的原理，它将学会如何自动补全代码。另一个例子是使用transformer回答表格中的问题，例如电子表格。</p>
 <p>由于transformer模型在文本领域取得了巨大成功，其他领域的社区对将这一技术应用于其他模态产生了浓厚的兴趣。这使得transformer模型被用于图像识别、图像切割、目标检测、视频理解等任务。</p>
-<p>卷积神经网络（CNN）一直被广泛用作大多数计算机视觉技术的最新标准模型。随着视觉Transformer（<a href="http://arxiv.org/abs/2010.11929" target="_blank" rel="noopener noreferrer">ViT</a>）的引入，近年来人们开始探索如何用注意力和基于transformer的技术处理视觉任务。ViT并没有完全弃用CNN：在图像处理管道中，CNN提取图像的特征图，以检测上层的边缘、纹理和其他模式。然后将从CNN获得的特征图分割成固定大小、不重叠的区块。这些区块可类似于标记序列进行处理，因此注意力机制可以学习不同位置区块之间的关系。</p>
+<p>卷积神经网络（CNN）一直被广泛用作大多数计算机视觉技术的最新标准模型。随着视觉Transformer（<a href="http://arxiv.org/abs/2010.11929" target="_blank" rel="noopener noreferrer">ViT</a>）的引入，近年来人们开始探索如何用注意力和基于transformer的技术处理视觉任务。ViT并没有完全弃用CNN：在图像处理管道中，CNN提取图像的特征图，以检测上层的边缘、纹理和其他模式。然后将从CNN获得的特征图分割成固定大小、不重叠的区块。这些区块可类似于标记序列进行处理，因此注意力机制可以学习不同位置区块之间的关系  。</p>
 <p>可惜，ViT需要比CNN更多的数据（3亿张图像！）和算力才能取得好的结果。近年来在这方面进行了更多研究，例如DeiT能够利用中型数据集（120万张图像）使用transformer模型，这要归功于使用了CNN中常见的增强和正则化技术。DeiT还使用了一种蒸馏方法，涉及一个“<code>teacher</code>”模型（这里为CNN）。其他模型如DETR、SegFormer和Swin Transformer推动了该领域的发展，支持了许多任务，如图像分类、目标检测、图像切割、视频分类、文档理解、图像修复、超分辨率等。</p>
 <p>我们在第9章会学到，transformer模型也可以用于音频任务，如转录音频或生成合成语音或音乐。在底层，预训练和注意力机制的基本原理仍然一致，但每种模态有不同的数据类型，需要不同的方式和调整。</p>
 <p>transformer正在探索的其他模态包括：</p>
@@ -264,7 +264,7 @@
 <li><strong>图像</strong>：很好的入门读物是Fourrier在2023年出版的《<a href="https://huggingface.co/blog/intro-graphml" target="_blank" rel="noopener noreferrer">图像机器学习入门</a>》。使用transformer处理图像数据仍然处于非常探索性的阶段，但已有一些令人兴奋的早期结果。涉及图像数据的任务有预测分子的毒性、预测系统的演变或生成新的分子。</li>
 <li><strong>3D数据</strong>：例如，对可以用3D表示的数据进行分割，如自动驾驶中的激光雷达点云或CT扫描中的器官识别。另一个例子是预估物体的六自由度位置，这在机器人应用中非常有用。</li>
 <li><strong>时间序列</strong>：分析股票价格或进行天气预报。</li>
-<li><strong>多模态</strong>：一些transformer模型设计用于同时处理或输出多种类型的数据（如文本、图像和音频）。这打开了新的可能性，例如多模态系统，你可以说话、写作或提供图片，并由一个模型来处理它们。还有视觉问答，其中模型可以 回答关于提供图像的问题。</li>
+<li><strong>多模态</strong>：一些transformer模型设计用于同时处理或输出多种类型的数据（如文本、图像和音频）。这打开了新的可能性，例如多模态系统，你可以说话、写作或提供图片，并由一个模型来处理它们。还有视觉问答，其中模型  可以回答关于提供图像的问题。</li>
 </ul>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="动手时间使用语言模型生成文本">动手时间：使用语言模型生成文本<a href="#动手时间使用语言模型生成文本" class="hash-link" aria-label="Direct link to 动手时间：使用语言模型生成文本" title="Direct link to 动手时间：使用语言模型生成文本">​</a></h2>
 <p>我们在生成一节使用了<code>generate()</code>方法来执行不同的解码技术。为更好地理解它的内部工作原理，下面我们来自己实现。我们将以<code>generate()</code>方法为参考，但从头开始实现它。我们还将探讨使用<code>generate()</code>方法执行不同的解码技术。</p>
@@ -299,7 +299,7 @@
 <!-- -->挑战</li>
 <li>使用摘要模型（可使用<code>pipeline(“summarization)</code>）生成段落摘要。它与使用零样本生成的结果相比如何？提供少样本示例是否能超越它？</li>
 <li>在零样本补充材料中，我们使用零样本分类计算了混淆矩阵。尝试使用<code>distilbert-base-uncased-finetuned-sst-2-english</code>编码器模型进行情感分析。得到的结果如何？</li>
-<li>我们来构建一个FAQ系统！Sentence transformers是强大的模型，可以确定多个文本的相似程度。虽然transformer编码器通常为每个标记输出一个嵌入，但句子transformer为整个输入文本输出一  个嵌入，使得我们可以根据相似度得分确定两个文本是否相似。我们来看使用<em>sentence_transformers</em>库的简单示例。</li>
+<li>我们来构建一个FAQ系统！Sentence transformers是强大的模型，可以确定多个文本的相似程度。虽然transformer编码器通常为每个标记输出一个嵌入，但句子transformer为整个输入文本输  出一个嵌入，使得我们可以根据相似度得分确定两个文本是否相似。我们来看使用<em>sentence_transformers</em>库的简单示例。</li>
 </ol>
 <div class="codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">from sentence_transformers import SentenceTransformer, util</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">sentences = [&quot;I&#x27;m happy&quot;, &quot;I&#x27;m full of happiness&quot;]</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">model = SentenceTransformer(&quot;sentence-transformers/all-MiniLM-L6-v2&quot;)</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"># Compute embedding for both lists</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">embedding_1 = model.encode(sentences[0], convert_to_tensor=True)</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">embedding_2 = model.encode(sentences[1], convert_to_tensor=True)</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">util.pytorch_cos_sim(embedding_1, embedding_2)</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
 <div class="codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">tensor([[0.6003]], device=&#x27;cuda:0&#x27;)</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
