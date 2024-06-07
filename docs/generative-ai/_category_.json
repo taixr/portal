@@ -1,8 +1,9 @@
 {
-  "label": "使用Transformer和Diffusion模型上手生成式AI",
+  "label": "Generative AI",
   "position": 1,
   "link": {
     "type": "generated-index",
+    "title": "使用Transformer和Diffusion模型上手生成式AI",
     "description": "生成式人工智能是一项革命性技术，已经从实验室演示跃升到影响数亿人的现实应用。它能够基于从现有数据中学习的模式创造新内容，如图像、文本、音频和视频。它可以增强创意、扩展数据及更多其他功能。一个训练在音乐数据上的生成式AI模型可以创作新的旋律或歌曲，而训练在文本数据上的模型可以生成新故事甚至写代码。"
   }
 }
